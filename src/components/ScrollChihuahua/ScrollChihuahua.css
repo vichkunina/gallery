@@ -1,0 +1,109 @@
+.scroll-chi {
+  position: fixed;
+  right: clamp(0.75rem, 2vw, 1.5rem);
+  z-index: 90;
+  pointer-events: none;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  will-change: top;
+  transition: top 0.08s linear;
+}
+
+@media (min-width: 900px) {
+  .scroll-chi {
+    display: flex;
+  }
+}
+
+.scroll-chi__dog {
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(10, 10, 10, 0.12));
+}
+
+.scroll-chi__shadow {
+  fill: rgba(10, 10, 10, 0.08);
+  transform-origin: center;
+}
+
+.scroll-chi__body-group {
+  transform-origin: 32px 24px;
+}
+
+.scroll-chi--up .scroll-chi__dog {
+  transform: scaleX(-1);
+}
+
+.scroll-chi--running .scroll-chi__body-group {
+  animation: chi-bounce 0.28s ease-in-out infinite alternate;
+}
+
+.scroll-chi--running .scroll-chi__leg--1,
+.scroll-chi--running .scroll-chi__leg--3 {
+  animation: chi-leg-a 0.18s steps(2) infinite;
+}
+
+.scroll-chi--running .scroll-chi__leg--2,
+.scroll-chi--running .scroll-chi__leg--4 {
+  animation: chi-leg-b 0.18s steps(2) infinite;
+}
+
+.scroll-chi--running .scroll-chi__tail {
+  animation: chi-tail 0.22s ease-in-out infinite alternate;
+  transform-origin: 20px 24px;
+}
+
+.scroll-chi--running .scroll-chi__ear--1 {
+  animation: chi-ear 0.32s ease-in-out infinite alternate;
+  transform-origin: 48px 8px;
+}
+
+.scroll-chi--running .scroll-chi__shadow {
+  animation: chi-shadow 0.28s ease-in-out infinite alternate;
+}
+
+.scroll-chi__label {
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+@keyframes chi-bounce {
+  from { transform: translateY(0) rotate(-2deg); }
+  to { transform: translateY(-2px) rotate(2deg); }
+}
+
+@keyframes chi-leg-a {
+  0%, 49% { transform: translateY(0); }
+  50%, 100% { transform: translateY(-3px) rotate(-8deg); }
+}
+
+@keyframes chi-leg-b {
+  0%, 49% { transform: translateY(-3px) rotate(8deg); }
+  50%, 100% { transform: translateY(0); }
+}
+
+@keyframes chi-tail {
+  from { transform: rotate(-6deg); }
+  to { transform: rotate(10deg); }
+}
+
+@keyframes chi-ear {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-8deg); }
+}
+
+@keyframes chi-shadow {
+  from { transform: scaleX(1); opacity: 1; }
+  to { transform: scaleX(0.88); opacity: 0.75; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-chi {
+    display: none;
+  }
+}

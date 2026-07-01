@@ -1,0 +1,201 @@
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-lightbox);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 3vw, 2rem);
+  opacity: 1;
+  pointer-events: all;
+  background: rgba(8, 12, 28, 0.94);
+  backdrop-filter: blur(12px);
+}
+
+.lightbox__topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem var(--container-padding);
+  z-index: 2;
+}
+
+.lightbox__counter {
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.lightbox__close {
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 0.5rem 0;
+  transition: opacity 0.3s;
+}
+
+.lightbox__close:hover {
+  opacity: 0.7;
+}
+
+.lightbox__inner {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  max-width: 1200px;
+  width: 100%;
+  max-height: calc(100svh - 5rem);
+  transform: translateY(24px);
+  opacity: 0;
+  transition: transform 0.65s var(--ease-out), opacity 0.55s var(--ease-out);
+}
+
+.lightbox--open .lightbox__inner {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.lightbox__img-col {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 0;
+}
+
+.lightbox__img-wrap {
+  flex: 1;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  max-height: calc(100svh - 6rem);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 2px;
+}
+
+.lightbox__img {
+  width: 100%;
+  max-height: calc(100svh - 6rem);
+  object-fit: contain;
+  background: transparent;
+  box-shadow: var(--shadow-image);
+}
+
+.lightbox__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+  transition: background 0.3s, color 0.3s, border-color 0.3s, opacity 0.3s;
+  z-index: 2;
+}
+
+.lightbox__nav:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.lightbox__nav:not(:disabled):hover {
+  background: var(--color-on-accent);
+  border-color: var(--color-on-accent);
+  color: var(--color-text);
+}
+
+.lightbox__nav--prev { left: -1.25rem; }
+.lightbox__nav--next { right: -1.25rem; }
+
+.lightbox__info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
+  padding-block: 1rem;
+}
+
+.lightbox__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.15;
+  margin-bottom: 0.75rem;
+}
+
+.lightbox__price {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.04em;
+}
+
+.lightbox__desc {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.65;
+  margin-bottom: 1rem;
+}
+
+.lightbox__meta {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.04em;
+  margin-bottom: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.lightbox__buy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.75rem;
+  background: var(--color-on-accent);
+  color: var(--color-text);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: var(--radius-pill);
+  transition: background 0.35s, transform 0.35s var(--ease-out);
+  width: fit-content;
+}
+
+.lightbox__buy:hover {
+  background: #ffffff;
+  transform: translateY(-2px);
+}
+
+.lightbox__sold-note {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 900px) {
+  .lightbox__inner {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+    max-height: calc(100svh - 4rem);
+  }
+
+  .lightbox__nav--prev { left: 0.5rem; }
+  .lightbox__nav--next { right: 0.5rem; }
+
+  .lightbox__nav {
+    background: rgba(8, 12, 28, 0.85);
+    backdrop-filter: blur(8px);
+  }
+}

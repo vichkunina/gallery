@@ -1,0 +1,118 @@
+.sticker-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 2;
+}
+
+.sticker-zone {
+  position: relative;
+  overflow: visible;
+}
+
+.sticker {
+  position: absolute;
+  transform: rotate(var(--sticker-rotate, 0deg));
+}
+
+.sticker-zone > :not(.sticker-field) {
+  position: relative;
+  z-index: 1;
+}
+
+.sticker--text {
+  font-family: var(--font-hand);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.sticker--text-sm {
+  font-size: clamp(0.9rem, 1.4vw, 1.2rem);
+}
+
+.sticker--text-md {
+  font-size: clamp(1.05rem, 1.7vw, 1.45rem);
+}
+
+.sticker--text-lg {
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+}
+
+.sticker--img {
+  height: auto;
+  max-width: min(var(--sticker-img-width, 72px), 18vw);
+  user-select: none;
+  -webkit-user-drag: none;
+  opacity: 0.92;
+  filter: drop-shadow(0 2px 6px rgba(10, 10, 10, 0.06));
+}
+
+.sticker--line {
+  height: auto;
+  max-width: min(var(--sticker-line-width, 120px), 22vw);
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+}
+
+.sticker--marker {
+  display: block;
+  height: 0.55rem;
+  border-radius: 999px;
+  opacity: 0.75;
+}
+
+.sticker--marker-black {
+  background: rgba(13, 13, 20, 0.85);
+  height: 0.45rem;
+}
+
+.sticker--marker-blue {
+  background: rgba(26, 64, 209, 0.85);
+  height: 0.5rem;
+}
+
+.sticker--marker-red {
+  background: rgba(204, 38, 26, 0.85);
+  height: 0.35rem;
+}
+
+.sticker--marker-yellow {
+  background: rgba(250, 224, 26, 0.85);
+  height: 0.65rem;
+  opacity: 0.55;
+}
+
+.sticker--circle {
+  display: block;
+  border: 2px solid;
+  border-radius: 45% 55% 48% 52% / 52% 48% 55% 45%;
+  opacity: 0.85;
+}
+
+.sticker--circle-black {
+  border-color: rgba(13, 13, 20, 0.9);
+}
+
+.sticker--circle-blue {
+  border-color: rgba(38, 77, 217, 0.9);
+  border-width: 2.5px;
+}
+
+.sticker--circle-red {
+  border-color: rgba(204, 38, 26, 0.9);
+}
+
+@media (max-width: 900px) {
+  .sticker-field {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sticker-field {
+    display: none;
+  }
+}

@@ -1,0 +1,203 @@
+.contact {
+  position: relative;
+  padding-block: var(--section-gap);
+  padding-inline: var(--container-padding);
+  border-top: var(--border-subtle);
+  background: var(--color-bg-soft);
+  text-align: center;
+}
+
+.contact__inner {
+  position: relative;
+  max-width: var(--container-max);
+  margin-inline: auto;
+}
+
+.contact__title-block {
+  display: inline-block;
+  padding-bottom: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.contact__title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
+  margin-bottom: 0;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+}
+
+.contact--visible .contact__title {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.contact__desc {
+  max-width: 30rem;
+  margin: 0 auto 3.5rem;
+  font-size: 0.88rem;
+  color: var(--color-muted);
+  line-height: 1.65;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.8s var(--ease-out) 0.12s, transform 0.8s var(--ease-out) 0.12s;
+}
+
+.contact--visible .contact__desc {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.contact__links {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+  padding-top: 2rem;
+  padding-bottom: 1.5rem;
+}
+
+.contact__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1.5rem 2.25rem;
+  border: var(--border-subtle);
+  background: var(--color-bg-card);
+  min-width: 160px;
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.65s var(--ease-out),
+    transform 0.65s var(--ease-out),
+    border-color 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out);
+}
+
+.contact--visible .contact__link:nth-of-type(1) { opacity: 1; transform: translateY(0); transition-delay: 0.2s; }
+.contact--visible .contact__link:nth-of-type(2) { opacity: 1; transform: translateY(0); transition-delay: 0.32s; }
+
+@media (hover: hover) {
+  .contact__link:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .contact__link:hover .contact__value {
+    color: var(--color-text);
+  }
+}
+
+.contact__label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  transition: color 0.35s;
+}
+
+.contact__value {
+  font-size: 0.82rem;
+  color: var(--color-text-soft);
+  transition: color 0.2s var(--ease-out);
+}
+
+.contact__note {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  opacity: 0;
+  transition: opacity 0.8s var(--ease-out) 0.6s;
+  margin-bottom: clamp(3rem, 6vw, 4.5rem);
+}
+
+.contact--visible .contact__note {
+  opacity: 1;
+}
+
+.contact__order {
+  text-align: left;
+  max-width: 48rem;
+  margin-inline: auto;
+  padding-bottom: 1.5rem;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.9s var(--ease-out) 0.5s, transform 0.9s var(--ease-out) 0.5s;
+}
+
+.contact--visible .contact__order {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.contact__order-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.contact__order-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: var(--border-subtle);
+  background: var(--color-bg-card);
+}
+
+.contact__order-step {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-right: var(--border-subtle);
+}
+
+.contact__order-step:last-child {
+  border-right: none;
+}
+
+.contact__order-num {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.75rem;
+}
+
+.contact__order-step-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+}
+
+.contact__order-step-text {
+  font-size: 0.82rem;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .contact__order-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .contact__order-step {
+    border-right: none;
+    border-bottom: var(--border-subtle);
+  }
+
+  .contact__order-step:last-child {
+    border-bottom: none;
+  }
+}

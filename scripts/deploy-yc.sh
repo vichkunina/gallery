@@ -34,11 +34,15 @@ upload_tree() {
     mime="$(content_type_for "$rel")"
 
     echo "upload: ${key} (${mime})"
-    if [[ "$rel" == "index.html" ]]; then
+    local cache_control=""
+    if [[ "$rel" == "index.html" || "$rel" == icons/* || "$rel" == favicon*.png || "$rel" == "apple-touch-icon.png" ]]; then
+      cache_control="no-cache, max-age=0"
+    fi
+    if [[ -n "$cache_control" ]]; then
       yc --profile "${PROFILE}" storage s3 cp \
         "${file}" "s3://${BUCKET}/${key}" \
         --content-type "${mime}" \
-        --cache-control "no-cache, max-age=0"
+        --cache-control "${cache_control}"
     else
       yc --profile "${PROFILE}" storage s3 cp \
         "${file}" "s3://${BUCKET}/${key}" \

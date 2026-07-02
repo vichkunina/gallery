@@ -3,6 +3,7 @@ const WORK_PREFIX = 'work';
 /** Old share links → current work id (and optional view). */
 const LEGACY_WORK_LINKS: Record<string, { workId: number; viewIndex?: number }> = {
   'work/39/3': { workId: 41 },
+  'work/26/3': { workId: 43 },
 };
 
 export function isLegacyWorkHash(location: Pick<Location, 'hash'>): boolean {

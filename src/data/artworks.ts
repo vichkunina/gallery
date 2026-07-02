@@ -281,8 +281,17 @@ export const artworks: Artwork[] = [
     views: [
       { src: mediaUrl('images/gallery/26-2024-10-27-01.jpg'), label: 'Фото 1' },
       { src: mediaUrl('images/gallery/26-2024-10-27-02.webp'), label: 'Фото 2' },
-      { src: mediaUrl('images/gallery/26-2024-10-27-03.jpg'), label: 'Фото 3' },
     ],
+    available: true,
+  },
+  {
+    id: 43,
+    title: '27 октября 2024',
+    category: 'mixed',
+    details: '—',
+    size: '—',
+    desc: '',
+    img: mediaUrl('images/gallery/26-2024-10-27-03.jpg'),
     available: true,
   },
   {

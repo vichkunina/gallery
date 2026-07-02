@@ -39,7 +39,7 @@ export function Lightbox() {
 
   return (
     <div
-      className="lightbox"
+      className="lightbox lightbox--open"
       role="dialog"
       aria-modal="true"
       aria-label={selected.title}

@@ -41,33 +41,34 @@ export function Header() {
           <span className="header__logo-name">{site.galleryName}</span>
         </a>
 
-        <nav className="header__nav" aria-label="Основная навигация">
-          <ul className="header__list">
-            {NAV.map((item) => (
-              <li key={item.id} className="header__item">
-                <a
-                  href={item.href}
-                  className={`header__link${activeSection === item.id ? ' header__link--active' : ''}`}
-                  onClick={() => setMenuOpen(false)}
-                  aria-current={activeSection === item.id ? 'true' : undefined}
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
         <button
           type="button"
           className="header__burger"
           aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
           aria-expanded={menuOpen}
+          aria-controls="header-nav"
           onClick={() => setMenuOpen((o) => !o)}
         >
           <span className="header__burger-line" />
         </button>
       </div>
+
+      <nav className="header__nav" id="header-nav" aria-label="Основная навигация">
+        <ul className="header__list">
+          {NAV.map((item) => (
+            <li key={item.id} className="header__item">
+              <a
+                href={item.href}
+                className={`header__link${activeSection === item.id ? ' header__link--active' : ''}`}
+                onClick={() => setMenuOpen(false)}
+                aria-current={activeSection === item.id ? 'true' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </header>
   );
 }

@@ -9,6 +9,8 @@ const LEGACY_WORK_LINKS: Record<string, { workId: number; viewIndex?: number }> 
   'work/14': { workId: 13, viewIndex: 1 },
   'work/14/2': { workId: 13, viewIndex: 2 },
   'work/15': { workId: 13, viewIndex: 0 },
+  'work/6/2': { workId: 44, viewIndex: 0 },
+  'work/6/3': { workId: 44, viewIndex: 1 },
 };
 
 export function isLegacyWorkHash(location: Pick<Location, 'hash'>): boolean {

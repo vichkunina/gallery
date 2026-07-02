@@ -1,5 +1,29 @@
 const WORK_PREFIX = 'work';
 
+/** Old share links → current work id (and optional view). */
+const LEGACY_WORK_LINKS: Record<string, { workId: number; viewIndex?: number }> = {
+  'work/39/3': { workId: 41 },
+};
+
+export function isLegacyWorkHash(location: Pick<Location, 'hash'>): boolean {
+  const hash = location.hash.replace(/^#/, '');
+  return hash in LEGACY_WORK_LINKS;
+}
+
+export function resolveWorkLocation(
+  location: Pick<Location, 'hash'>,
+): { workId: number; viewIndex: number } | null {
+  const hash = location.hash.replace(/^#/, '');
+  const legacy = LEGACY_WORK_LINKS[hash];
+  if (legacy) {
+    return { workId: legacy.workId, viewIndex: legacy.viewIndex ?? 0 };
+  }
+
+  const workId = parseWorkIdFromLocation(location);
+  if (workId === null) return null;
+  return { workId, viewIndex: parseWorkViewFromLocation(location) };
+}
+
 export function parseWorkIdFromLocation(location: Pick<Location, 'hash'>): number | null {
   const match = location.hash.match(/^#work\/(\d+)(?:\/(\d+))?$/);
   if (!match) return null;

@@ -426,8 +426,17 @@ export const artworks: Artwork[] = [
     views: [
       { src: mediaUrl('images/gallery/39-2023-01-08-01.jpg'), label: 'Фото 1' },
       { src: mediaUrl('images/gallery/39-2023-01-08-02.jpg'), label: 'Фото 2' },
-      { src: mediaUrl('images/gallery/39-2023-01-08-03.jpg'), label: 'Фото 3' },
     ],
+    available: true,
+  },
+  {
+    id: 41,
+    title: '8 января 2023',
+    category: 'mixed',
+    details: '—',
+    size: '—',
+    desc: '',
+    img: mediaUrl('images/gallery/39-2023-01-08-03.jpg'),
     available: true,
   },
   {

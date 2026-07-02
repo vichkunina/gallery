@@ -12,8 +12,9 @@ import { artworks } from '../data/artworks';
 import type { Artwork } from '../types';
 import { getArtworkViews, hasMultipleViews } from '../utils/artworkViews';
 import {
+  isLegacyWorkHash,
   parseWorkIdFromLocation,
-  parseWorkViewFromLocation,
+  resolveWorkLocation,
   syncWorkUrl,
 } from '../utils/galleryUrl';
 import { buildArtworkIndexById } from '../utils/validateArtworkIds';
@@ -58,13 +59,16 @@ function isMultiViewWork(workIndex: number | null): boolean {
 export function GalleryProvider({ children }: { children: ReactNode }) {
   const openedViaPush = useRef(false);
 
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(() =>
-    resolveWorkIndex(parseWorkIdFromLocation(window.location)),
-  );
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(() => {
+    const resolved = resolveWorkLocation(window.location);
+    return resolved ? resolveWorkIndex(resolved.workId) : null;
+  });
   const [viewIndex, setViewIndexState] = useState(() => {
-    const workIndex = resolveWorkIndex(parseWorkIdFromLocation(window.location));
+    const resolved = resolveWorkLocation(window.location);
+    if (!resolved) return 0;
+    const workIndex = resolveWorkIndex(resolved.workId);
     if (workIndex === null) return 0;
-    return clampViewIndex(workIndex, parseWorkViewFromLocation(window.location));
+    return clampViewIndex(workIndex, resolved.viewIndex);
   });
 
   const selected = selectedIndex === null ? null : (artworks[selectedIndex] ?? null);
@@ -137,12 +141,17 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const applyLocation = () => {
-      const workIndex = resolveWorkIndex(parseWorkIdFromLocation(window.location));
+      const resolved = resolveWorkLocation(window.location);
+      const workIndex = resolved ? resolveWorkIndex(resolved.workId) : null;
       const view =
-        workIndex === null ? 0 : clampViewIndex(workIndex, parseWorkViewFromLocation(window.location));
+        workIndex === null ? 0 : clampViewIndex(workIndex, resolved?.viewIndex ?? 0);
       setSelectedIndex(workIndex);
       setViewIndexState(view);
       if (workIndex === null) openedViaPush.current = false;
+
+      if (resolved && workIndex !== null && isLegacyWorkHash(window.location)) {
+        syncUrl(workIndex, view, 'replace');
+      }
     };
 
     window.addEventListener('popstate', applyLocation);

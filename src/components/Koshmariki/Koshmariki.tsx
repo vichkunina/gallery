@@ -1,8 +1,9 @@
 import { useCallback, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { koshmariki } from '../../data/koshmariki';
 import { stickerZones } from '../../data/stickers';
 import { useLightboxKeyboard } from '../../hooks/useLightboxKeyboard';
-import { useLockBodyScroll } from '../../hooks/useLockBodyScroll';
+import { useLightboxPageLock } from '../../hooks/useLightboxPageLock';
 import { useSwipeNavigation } from '../../hooks/useSwipeNavigation';
 import { useReveal } from '../../hooks/useReveal';
 import { mediaThumbUrl } from '../../config/media';
@@ -19,6 +20,7 @@ export function Koshmariki() {
   const selectedIndex = selected ? items.findIndex((item) => item.id === selected.id) : -1;
   const hasPrev = selectedIndex > 0;
   const hasNext = selectedIndex >= 0 && selectedIndex < items.length - 1;
+  const isOpen = selected !== null;
 
   const close = useCallback(() => setSelected(null), []);
   const next = useCallback(() => {
@@ -28,9 +30,9 @@ export function Koshmariki() {
     if (hasPrev) setSelected(items[selectedIndex - 1]);
   }, [hasPrev, items, selectedIndex]);
 
-  useLockBodyScroll(selected !== null);
-  useLightboxKeyboard(selected !== null, { close, next, prev, hasNext, hasPrev });
-  useSwipeNavigation(stageRef, selected !== null, {
+  useLightboxPageLock(isOpen);
+  useLightboxKeyboard(isOpen, { close, next, prev, hasNext, hasPrev });
+  useSwipeNavigation(stageRef, isOpen, {
     onSwipeLeft: hasNext ? next : undefined,
     onSwipeRight: hasPrev ? prev : undefined,
   });
@@ -77,56 +79,54 @@ export function Koshmariki() {
         </div>
       </div>
 
-      {selected && (
-        <div
-          className="koshmariki__lightbox"
-          role="dialog"
-          aria-modal="true"
-          aria-label={selected.title}
-        >
-          <button
-            type="button"
-            className="koshmariki__lightbox-backdrop"
-            aria-label="Закрыть"
-            onClick={close}
-          />
+      {selected &&
+        createPortal(
+          <div
+            className="koshmariki__lightbox"
+            role="dialog"
+            aria-modal="true"
+            aria-label={selected.title}
+            onClick={(event) => {
+              if (event.target === event.currentTarget) close();
+            }}
+          >
+            <div className="koshmariki__lightbox-top">
+              <span className="koshmariki__lightbox-counter">
+                {selectedIndex + 1} / {items.length}
+              </span>
+              <button type="button" className="koshmariki__lightbox-close" onClick={close}>
+                Закрыть
+              </button>
+            </div>
 
-          <div className="koshmariki__lightbox-top">
-            <span className="koshmariki__lightbox-counter">
-              {selectedIndex + 1} / {items.length}
-            </span>
-            <button type="button" className="koshmariki__lightbox-close" onClick={close}>
-              Закрыть
+            <button
+              type="button"
+              className="koshmariki__lightbox-nav koshmariki__lightbox-nav--prev"
+              onClick={prev}
+              disabled={!hasPrev}
+              aria-label="Предыдущая"
+            >
+              ←
             </button>
-          </div>
 
-          <button
-            type="button"
-            className="koshmariki__lightbox-nav koshmariki__lightbox-nav--prev"
-            onClick={prev}
-            disabled={!hasPrev}
-            aria-label="Предыдущая"
-          >
-            ←
-          </button>
+            <div ref={stageRef} className="koshmariki__lightbox-stage">
+              <img className="koshmariki__lightbox-img" src={selected.img} alt={selected.title} />
+            </div>
 
-          <div ref={stageRef} className="koshmariki__lightbox-stage">
-            <img className="koshmariki__lightbox-img" src={selected.img} alt={selected.title} />
-          </div>
+            <button
+              type="button"
+              className="koshmariki__lightbox-nav koshmariki__lightbox-nav--next"
+              onClick={next}
+              disabled={!hasNext}
+              aria-label="Следующая"
+            >
+              →
+            </button>
 
-          <button
-            type="button"
-            className="koshmariki__lightbox-nav koshmariki__lightbox-nav--next"
-            onClick={next}
-            disabled={!hasNext}
-            aria-label="Следующая"
-          >
-            →
-          </button>
-
-          <p className="koshmariki__lightbox-title">{selected.title}</p>
-        </div>
-      )}
+            <p className="koshmariki__lightbox-title">{selected.title}</p>
+          </div>,
+          document.body,
+        )}
     </section>
   );
 }

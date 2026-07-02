@@ -52,6 +52,23 @@ button {
   outline-offset: 3px;
 }
 
+html.lightbox-open {
+  overflow: hidden;
+}
+
+html.lightbox-open body {
+  overflow: hidden;
+}
+
+html.lightbox-open #root {
+  visibility: hidden;
+}
+
+html.lightbox-open .lightbox,
+html.lightbox-open .koshmariki__lightbox {
+  visibility: visible;
+}
+
 #root {
   min-height: 100vh;
 }

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useGallery } from '../../context/GalleryContext';
 import { useGalleryLightboxNavigation } from '../../hooks/useGalleryLightboxNavigation';
 import { useLightboxKeyboard } from '../../hooks/useLightboxKeyboard';
-import { useLockBodyScroll } from '../../hooks/useLockBodyScroll';
+import { useLightboxPageLock } from '../../hooks/useLightboxPageLock';
 import { useSwipeNavigation } from '../../hooks/useSwipeNavigation';
 import { artworkViewAlt, getArtworkViews, hasMultipleViews } from '../../utils/artworkViews';
 import { mediaThumbUrl } from '../../config/media';
@@ -55,7 +56,7 @@ export function Lightbox() {
     onSwipeRight: swipeRight,
   });
 
-  useLockBodyScroll(isOpen);
+  useLightboxPageLock(isOpen);
   useLightboxKeyboard(isOpen, {
     close,
     next,
@@ -81,15 +82,16 @@ export function Lightbox() {
 
   if (!selected || !currentView) return null;
 
-  return (
+  return createPortal(
     <div
       className="lightbox lightbox--open"
       role="dialog"
       aria-modal="true"
       aria-label={selected.title}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) close();
+      }}
     >
-      <button type="button" className="lightbox__backdrop" aria-label="Закрыть" onClick={close} />
-
       <div className="lightbox__topbar">
         <div className="lightbox__topbar-start">
           <span className="lightbox__counter">
@@ -184,6 +186,7 @@ export function Lightbox() {
           <p className="lightbox__sold-note">Эта работа уже нашла дом</p>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

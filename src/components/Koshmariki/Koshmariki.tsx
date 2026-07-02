@@ -55,7 +55,12 @@ export function Koshmariki() {
               aria-label={item.title}
             >
               <div className="koshmariki__card-media">
-                <ArtImage src={item.img} alt={item.title} loading="lazy" fit="contain" />
+                <ArtImage
+                  src={item.img}
+                  alt={`${item.title} — серия Кошмарики, Дарья Вичкунина`}
+                  loading="lazy"
+                  fit="contain"
+                />
                 <span className="koshmariki__card-overlay">
                   <span className="koshmariki__card-title">{item.title}</span>
                 </span>

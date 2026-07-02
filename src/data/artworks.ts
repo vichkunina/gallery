@@ -1,4 +1,5 @@
 import type { Artwork, CategoryFilter } from '../types';
+import { mediaUrl } from '../config/media';
 
 export const artworks: Artwork[] = [
   {
@@ -8,7 +9,7 @@ export const artworks: Artwork[] = [
     details: 'Акварель · этюд',
     size: '—',
     desc: 'Долгий акварельный этюд — работа о форме, свете и природе.',
-    img: '/images/gallery/01-bifurkatsiya-sosny-771.jpg',
+    img: mediaUrl('images/gallery/01-bifurkatsiya-sosny-771.jpg'),
     available: true,
   },
   {
@@ -18,7 +19,7 @@ export const artworks: Artwork[] = [
     details: 'Гуашь · копия',
     size: '—',
     desc: 'Копия работы Айвазовского — эксперимент с морем и светом.',
-    img: '/images/gallery/02-aivazovsky-952.jpg',
+    img: mediaUrl('images/gallery/02-aivazovsky-952.jpg'),
     available: true,
   },
   {
@@ -28,7 +29,7 @@ export const artworks: Artwork[] = [
     details: 'Масло на холсте',
     size: '15 × 15 см',
     desc: 'Небольшая масляная работа на холсте.',
-    img: '/images/gallery/03-ne-podglyadyvay-865.jpg',
+    img: mediaUrl('images/gallery/03-ne-podglyadyvay-865.jpg'),
     available: true,
   },
   {
@@ -38,7 +39,7 @@ export const artworks: Artwork[] = [
     details: 'Зарисовка',
     size: '—',
     desc: 'Ироничная зарисовка — смесь поп-культуры и живописи.',
-    img: '/images/gallery/04-voldemort-nos-867.jpg',
+    img: mediaUrl('images/gallery/04-voldemort-nos-867.jpg'),
     available: true,
   },
   {
@@ -48,7 +49,7 @@ export const artworks: Artwork[] = [
     details: 'Картина',
     size: '—',
     desc: 'Картина в тёплых закатных тонах.',
-    img: '/images/gallery/05-zakat-811.jpg',
+    img: mediaUrl('images/gallery/05-zakat-811.jpg'),
     available: true,
   },
   {
@@ -58,7 +59,7 @@ export const artworks: Artwork[] = [
     details: 'Пейзаж',
     size: '—',
     desc: 'Морской пейзаж с айсбергом — холодные оттенки и лёд.',
-    img: '/images/gallery/06-aysberg-812.jpg',
+    img: mediaUrl('images/gallery/06-aysberg-812.jpg'),
     available: true,
   },
   {
@@ -68,7 +69,7 @@ export const artworks: Artwork[] = [
     details: 'Гуашь',
     size: '—',
     desc: 'Работа гуашью — эксперимент с цветом и фактурой.',
-    img: '/images/gallery/07-guash-813.jpg',
+    img: mediaUrl('images/gallery/07-guash-813.jpg'),
     available: true,
   },
   {
@@ -78,7 +79,7 @@ export const artworks: Artwork[] = [
     details: 'Смешанная техника',
     size: '—',
     desc: 'Серия с лучами света — игра света и композиции.',
-    img: '/images/gallery/08-luchi-793.jpg',
+    img: mediaUrl('images/gallery/08-luchi-793.jpg'),
     available: true,
   },
   {
@@ -88,7 +89,7 @@ export const artworks: Artwork[] = [
     details: '',
     size: '—',
     desc: 'Одна из завершённых работ из мастерской.',
-    img: '/images/gallery/09-finished-1023.jpg',
+    img: mediaUrl('images/gallery/09-finished-1023.jpg'),
     available: true,
   },
   {
@@ -98,7 +99,7 @@ export const artworks: Artwork[] = [
     details: 'Масло · абстракция',
     size: '—',
     desc: 'Попытка написать давящую, депрессивную картину в солнечный день.',
-    img: '/images/gallery/10-depressivnaya-1038.jpg',
+    img: mediaUrl('images/gallery/10-depressivnaya-1038.jpg'),
     available: true,
   },
   {
@@ -108,7 +109,7 @@ export const artworks: Artwork[] = [
     details: 'Масло · море',
     size: '—',
     desc: 'Морской пейзаж — работа в процессе доработки неба и горизонта.',
-    img: '/images/gallery/11-more-1051.jpg',
+    img: mediaUrl('images/gallery/11-more-1051.jpg'),
     available: true,
   },
   {
@@ -118,7 +119,7 @@ export const artworks: Artwork[] = [
     details: 'Зарисовка',
     size: '—',
     desc: 'Быстрая зарисовка — Воландеморт собирается на вечеринку.',
-    img: '/images/gallery/12-voldemort-party-801.jpg',
+    img: mediaUrl('images/gallery/12-voldemort-party-801.jpg'),
     available: true,
   },
   {
@@ -128,7 +129,7 @@ export const artworks: Artwork[] = [
     details: 'Автопортрет · учёба',
     size: '—',
     desc: 'Автопортрет с занятий — психологическое упражнение в живописи.',
-    img: '/images/gallery/13-avtoportret-987.jpg',
+    img: mediaUrl('images/gallery/13-avtoportret-987.jpg'),
     available: true,
   },
   {
@@ -138,7 +139,7 @@ export const artworks: Artwork[] = [
     details: 'Картина',
     size: '—',
     desc: 'Домик из одного известного уютного фильма.',
-    img: '/images/gallery/14-domik-735.jpg',
+    img: mediaUrl('images/gallery/14-domik-735.jpg'),
     available: true,
   },
   {
@@ -148,7 +149,7 @@ export const artworks: Artwork[] = [
     details: 'Масло',
     size: '—',
     desc: 'Демонница — вот она сидит.',
-    img: '/images/gallery/15-demonitsa-757.jpg',
+    img: mediaUrl('images/gallery/15-demonitsa-757.jpg'),
     available: true,
   },
   {
@@ -158,7 +159,7 @@ export const artworks: Artwork[] = [
     details: 'Картина',
     size: '—',
     desc: 'Серия картин с зайкой.',
-    img: '/images/gallery/16-zayka-758.jpg',
+    img: mediaUrl('images/gallery/16-zayka-758.jpg'),
     available: true,
   },
   {
@@ -168,7 +169,7 @@ export const artworks: Artwork[] = [
     details: 'Учебная работа',
     size: '—',
     desc: 'Работа с пластичностью фигуры.',
-    img: '/images/gallery/17-jesus-762.jpg',
+    img: mediaUrl('images/gallery/17-jesus-762.jpg'),
     available: true,
   },
   {
@@ -178,7 +179,7 @@ export const artworks: Artwork[] = [
     details: 'Гуашь · копия',
     size: '—',
     desc: 'Копия картины — угадайте, какой.',
-    img: '/images/gallery/18-guash-copy-772.jpg',
+    img: mediaUrl('images/gallery/18-guash-copy-772.jpg'),
     available: true,
   },
   {
@@ -188,7 +189,7 @@ export const artworks: Artwork[] = [
     details: 'Картина',
     size: '—',
     desc: 'Цвета неба с новой картины.',
-    img: '/images/gallery/19-nebo-776.jpg',
+    img: mediaUrl('images/gallery/19-nebo-776.jpg'),
     available: true,
   },
   {
@@ -198,7 +199,7 @@ export const artworks: Artwork[] = [
     details: 'Зарисовка',
     size: '—',
     desc: 'Быстрая зарисовка — нарисовала за 20 минут.',
-    img: '/images/gallery/20-sketch-808.jpg',
+    img: mediaUrl('images/gallery/20-sketch-808.jpg'),
     available: true,
   },
   {
@@ -208,7 +209,7 @@ export const artworks: Artwork[] = [
     details: 'Учебная работа',
     size: '—',
     desc: 'Построение черепа в живописи.',
-    img: '/images/gallery/21-cherep-828.jpg',
+    img: mediaUrl('images/gallery/21-cherep-828.jpg'),
     available: true,
   },
   {
@@ -218,7 +219,7 @@ export const artworks: Artwork[] = [
     details: 'Картина',
     size: '—',
     desc: 'Работа, которая нравится в процессе.',
-    img: '/images/gallery/22-progress-845.jpg',
+    img: mediaUrl('images/gallery/22-progress-845.jpg'),
     available: true,
   },
   {
@@ -228,7 +229,7 @@ export const artworks: Artwork[] = [
     details: 'Масло',
     size: '—',
     desc: 'Демонница — продолжение большой работы.',
-    img: '/images/gallery/23-demonitsa-2-874.jpg',
+    img: mediaUrl('images/gallery/23-demonitsa-2-874.jpg'),
     available: true,
   },
   {
@@ -238,7 +239,7 @@ export const artworks: Artwork[] = [
     details: '',
     size: '—',
     desc: 'Работа, которая выходит талантливо.',
-    img: '/images/gallery/24-talent-891.jpg',
+    img: mediaUrl('images/gallery/24-talent-891.jpg'),
     available: true,
   },
   {
@@ -248,7 +249,7 @@ export const artworks: Artwork[] = [
     details: 'Зарисовка',
     size: '—',
     desc: 'Зарисовка персонажа.',
-    img: '/images/gallery/25-mister-dudets-900.jpg',
+    img: mediaUrl('images/gallery/25-mister-dudets-900.jpg'),
     available: true,
   },
   {
@@ -258,7 +259,7 @@ export const artworks: Artwork[] = [
     details: '',
     size: '—',
     desc: 'Работа, написанная вечером.',
-    img: '/images/gallery/26-vecher-883.jpg',
+    img: mediaUrl('images/gallery/26-vecher-883.jpg'),
     available: true,
   },
   {
@@ -268,7 +269,7 @@ export const artworks: Artwork[] = [
     details: 'Пейзаж',
     size: '—',
     desc: 'Айсберг — ещё один ракурс.',
-    img: '/images/gallery/27-aysberg-2-1008.jpg',
+    img: mediaUrl('images/gallery/27-aysberg-2-1008.jpg'),
     available: true,
   },
   {
@@ -278,7 +279,7 @@ export const artworks: Artwork[] = [
     details: 'Масло',
     size: '—',
     desc: 'Мрачная картина без позитива.',
-    img: '/images/gallery/28-mrachnaya-1028.jpg',
+    img: mediaUrl('images/gallery/28-mrachnaya-1028.jpg'),
     available: true,
   },
   {
@@ -288,7 +289,7 @@ export const artworks: Artwork[] = [
     details: 'Масло',
     size: '—',
     desc: 'Картина с мамой — уехала в Магнитогорск.',
-    img: '/images/gallery/29-mama-1043.jpg',
+    img: mediaUrl('images/gallery/29-mama-1043.jpg'),
     available: true,
   },
   {
@@ -298,7 +299,7 @@ export const artworks: Artwork[] = [
     details: 'Масло · море',
     size: '—',
     desc: 'Морское настроение — работа в процессе.',
-    img: '/images/gallery/30-more-wip-1044.jpg',
+    img: mediaUrl('images/gallery/30-more-wip-1044.jpg'),
     available: true,
   },
   {
@@ -308,7 +309,7 @@ export const artworks: Artwork[] = [
     details: 'Масло · море',
     size: '—',
     desc: 'Скоро добавлю главные детали.',
-    img: '/images/gallery/31-more-detail-1052.jpg',
+    img: mediaUrl('images/gallery/31-more-detail-1052.jpg'),
     available: true,
   },
   {
@@ -318,7 +319,7 @@ export const artworks: Artwork[] = [
     details: 'Автопортрет',
     size: '—',
     desc: 'Рисовала себя — вроде похоже, но не похоже.',
-    img: '/images/gallery/32-self-2-1064.jpg',
+    img: mediaUrl('images/gallery/32-self-2-1064.jpg'),
     available: true,
   },
   {
@@ -328,7 +329,7 @@ export const artworks: Artwork[] = [
     details: '',
     size: '—',
     desc: 'Решила так раскраситься.',
-    img: '/images/gallery/33-colors-767.jpg',
+    img: mediaUrl('images/gallery/33-colors-767.jpg'),
     available: true,
   },
   {
@@ -338,7 +339,7 @@ export const artworks: Artwork[] = [
     details: '',
     size: '—',
     desc: 'Щекотливый стаффаж — картина, а не Берточка.',
-    img: '/images/gallery/34-staffazh-780.jpg',
+    img: mediaUrl('images/gallery/34-staffazh-780.jpg'),
     available: true,
   },
   {
@@ -348,7 +349,7 @@ export const artworks: Artwork[] = [
     details: 'Масло',
     size: '—',
     desc: 'Субботняя сессия с демонницей.',
-    img: '/images/gallery/35-demonitsa-sat-806.jpg',
+    img: mediaUrl('images/gallery/35-demonitsa-sat-806.jpg'),
     available: true,
   },
   {
@@ -358,7 +359,7 @@ export const artworks: Artwork[] = [
     details: '',
     size: '—',
     desc: 'Алконост с мордой Хатико.',
-    img: '/images/gallery/36-alkonost-848.jpg',
+    img: mediaUrl('images/gallery/36-alkonost-848.jpg'),
     available: true,
   },
 ];

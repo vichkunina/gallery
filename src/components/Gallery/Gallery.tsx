@@ -4,6 +4,7 @@ import { stickerZones } from '../../data/stickers';
 import { useGallery } from '../../context/GalleryContext';
 import { useReveal } from '../../hooks/useReveal';
 import { prefersReducedMotion } from '../../utils/motion';
+import { artworkAlt } from '../../utils/seoAlt';
 import type { CategoryFilter } from '../../types';
 import { ArtImage } from '../ArtImage/ArtImage';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
@@ -81,8 +82,7 @@ export function Gallery() {
   const filtered =
     filter === 'all' ? artworks : artworks.filter((a) => a.category === filter);
 
-  const visibleItems = expanded ? filtered : filtered.slice(0, INITIAL_VISIBLE);
-  const hiddenCount = filtered.length - visibleItems.length;
+  const hiddenCount = Math.max(0, filtered.length - INITIAL_VISIBLE);
   const showMore = !expanded && hiddenCount > 0;
 
   return (
@@ -91,7 +91,15 @@ export function Gallery() {
         <SectionLabel number="02" />
 
         <div className={`gallery__head${headVisible ? ' reveal--visible' : ' reveal'}`}>
-          <h2 className="gallery__title">Галерея</h2>
+          <h2 className="gallery__title">Галерея картин</h2>
+          <p className="gallery__intro">
+            Оригинальные картины маслом, акварелью и смешанной техникой. Можно купить
+            готовую работу или{' '}
+            <a className="gallery__intro-link" href="#contact">
+              заказать картину
+            </a>
+            .
+          </p>
         </div>
 
         <div className="gallery__filters" role="group" aria-label="Фильтр по технике">
@@ -109,21 +117,21 @@ export function Gallery() {
         </div>
 
         <div
-          className={`gallery__grid sticker-zone${filtering ? ' gallery__grid--filtering' : ''}`}
+          className={`gallery__grid sticker-zone${filtering ? ' gallery__grid--filtering' : ''}${expanded ? ' gallery__grid--expanded' : ''}`}
           ref={gridRef}
         >
           <StickerField items={stickerZones.galleryGrid} />
-          {visibleItems.map((art, index) => (
+          {filtered.map((art, index) => (
             <button
               key={art.id}
               type="button"
-              className="gallery__card"
+              className={`gallery__card${!expanded && index >= INITIAL_VISIBLE ? ' gallery__card--folded' : ''}`}
               style={{ transitionDelay: `${index * 0.08}s` }}
               onClick={() => select(art)}
               aria-label={art.title}
             >
               <div className="gallery__frame">
-                <ArtImage src={art.img} alt={art.title} fit="contain" />
+                <ArtImage src={art.img} alt={artworkAlt(art)} fit="contain" />
                 <span className="gallery__view">Смотреть</span>
                 {!art.available && <span className="gallery__sold">Продано</span>}
               </div>
@@ -135,6 +143,7 @@ export function Gallery() {
                   {[art.details, art.size !== '—' ? art.size : ''].filter(Boolean).join(' · ')}
                 </p>
               )}
+              {art.desc && <p className="gallery__desc">{art.desc}</p>}
             </button>
           ))}
         </div>

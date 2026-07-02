@@ -23,6 +23,7 @@ export function Hero() {
           <h1 className="hero__title">
             Привет, я&nbsp;{site.artistFirstName}
           </h1>
+          <p className="hero__subtitle">{site.heroSubtitle}</p>
           <p className="hero__quote">{site.heroQuote}</p>
 
           <div className="hero__actions">
@@ -50,7 +51,7 @@ export function Hero() {
           <div className="hero__visual-inner">
             <ArtImage
               src={site.heroImage}
-              alt="Дарья Вичкунина"
+              alt="Дарья Вичкунина — художник, портрет"
               fit="cover"
               priority
             />

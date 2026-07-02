@@ -1,3 +1,5 @@
+import { mediaUrl } from '../config/media';
+
 export type StickerItem =
   | {
       kind: 'text';
@@ -51,7 +53,7 @@ export type StickerItem =
       left?: string;
     };
 
-const decor = (name: string) => `/images/decor/${name}`;
+const decor = (name: string) => mediaUrl(`images/decor/${name}`);
 
 /** Stickers scoped to decorative zones — never on text blocks */
 export const stickerZones = {

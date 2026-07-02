@@ -34,6 +34,7 @@ export interface SiteContent {
   artistFirstName: string;
   heroImage: string;
   heroQuote: string;
+  heroSubtitle: string;
   bio: string[];
   processTitle: string;
   processSteps: ProcessStep[];

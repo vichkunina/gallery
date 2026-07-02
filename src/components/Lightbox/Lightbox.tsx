@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useGallery } from '../../context/GalleryContext';
 import { useLightboxKeyboard } from '../../hooks/useLightboxKeyboard';
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll';
+import { artworkAlt } from '../../utils/seoAlt';
 import './Lightbox.css';
 
 export function Lightbox() {
@@ -72,7 +73,7 @@ export function Lightbox() {
               key={selected.id}
               className="lightbox__img"
               src={selected.img}
-              alt={selected.title}
+              alt={artworkAlt(selected)}
             />
           </div>
 

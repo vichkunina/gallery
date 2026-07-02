@@ -1,12 +1,14 @@
 import type { SiteContent } from '../types';
+import { mediaUrl } from '../config/media';
 
 export const site: SiteContent = {
   galleryName: 'Дарья Вичкунина',
   artistName: 'Вичкунина Дарья',
   artistFirstName: 'Дарья',
-  heroImage: '/images/hero/portrait.png',
+  heroImage: mediaUrl('images/hero/portrait.png'),
   heroQuote:
     'Когда-то я стану известным художником, а сейчас можно посмотреть, как это происходит.',
+  heroSubtitle: 'Художник · галерея картин · заказ на масле и акварели',
   bio: [
     'По будням я программист — пишу код и решаю задачи.',
     'А рисую с детства — просто для себя, для удовольствия. Пробую всё, но особенный кайф получаю с масла.',
@@ -31,8 +33,8 @@ export const site: SiteContent = {
     },
   ],
   contacts: [
-    { label: 'Telegram-канал', value: '@vichkunina_d', href: 'https://t.me/vichkunina_d' },
-    { label: 'Написать мне', value: '@vichkunina', href: 'https://t.me/vichkunina' },
+    { label: 'Канал', value: '@vichkunina_d', href: 'https://t.me/vichkunina_d' },
+    { label: 'Личка', value: '@vichkunina', href: 'https://t.me/vichkunina' },
   ],
   contactNote: 'Отвечаю в течение 1–2 дней',
 };

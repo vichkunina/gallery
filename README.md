@@ -28,10 +28,25 @@ npm run dev
 ## Публикация
 
 ```bash
-npm run build   # → dist/
+npm run build        # → dist/
+npm run deploy:yc    # деплой на Yandex Object Storage
+npm run upload:media # загрузка картинок в bucket (см. ниже)
 ```
 
 **Netlify / Vercel:** build `npm run build`, publish `dist`
+
+## Картинки (только в облаке)
+
+Файлы **не хранятся в репозитории**. Они лежат в bucket `galleryvic` на Yandex Cloud и отдаются через CDN (`/images/...` на сайте).
+
+Локально для загрузки новых файлов — папка `media/` (в `.gitignore`):
+
+```bash
+# Структура: media/images/gallery/..., media/images/hero/..., и т.д.
+bash scripts/upload-media.sh
+```
+
+В dev-коде пути задаются через `mediaUrl('images/...')` в `src/data/` — URL собирается из bucket/CDN (см. `.env.development`).
 
 ## Настройка
 
@@ -40,8 +55,7 @@ npm run build   # → dist/
 | `src/data/content.ts` | Имя, био, контакты, процесс заказа |
 | `src/data/artworks.ts` | Картины и цены |
 | `src/styles/variables.css` | Цвета, шрифты, отступы |
-
-Фото: `public/images/` → путь `/images/photo.jpg`
+| `src/config/media.ts` | Базовый URL медиа (prod: same-origin, dev: bucket) |
 
 ## Архитектура
 

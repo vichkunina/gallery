@@ -163,9 +163,42 @@
   border-color: rgba(255, 255, 255, 0.7);
 }
 
-.lightbox__nav {
+.lightbox__nav-zone {
   grid-row: 2;
-  align-self: center;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: clamp(3.25rem, 12vw, 5.5rem);
+  min-height: 0;
+  margin: 0;
+  padding: 0 clamp(0.15rem, 1.5vw, 0.5rem);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.25s;
+}
+
+.lightbox__nav-zone:disabled {
+  cursor: not-allowed;
+}
+
+.lightbox__nav-zone:not(:disabled):hover,
+.lightbox__nav-zone:not(:disabled):focus-visible {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.lightbox__nav-zone--prev {
+  grid-column: 1;
+}
+
+.lightbox__nav-zone--next {
+  grid-column: 3;
+}
+
+.lightbox__nav-icon {
+  flex-shrink: 0;
   width: 44px;
   height: 44px;
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -175,29 +208,20 @@
   justify-content: center;
   color: rgba(255, 255, 255, 0.9);
   font-size: 1.1rem;
-  transition: background 0.25s, color 0.25s, border-color 0.25s, opacity 0.25s;
-  z-index: 2;
   background: rgba(6, 8, 18, 0.5);
-  margin-inline: 0.35rem;
+  transition: background 0.25s, color 0.25s, border-color 0.25s, opacity 0.25s;
+  pointer-events: none;
 }
 
-.lightbox__nav:disabled {
+.lightbox__nav-zone:disabled .lightbox__nav-icon {
   opacity: 0.15;
-  cursor: not-allowed;
 }
 
-.lightbox__nav:not(:disabled):hover {
+.lightbox__nav-zone:not(:disabled):hover .lightbox__nav-icon,
+.lightbox__nav-zone:not(:disabled):focus-visible .lightbox__nav-icon {
   background: var(--color-on-accent);
   border-color: var(--color-on-accent);
   color: var(--color-text);
-}
-
-.lightbox__nav--prev {
-  grid-column: 1;
-}
-
-.lightbox__nav--next {
-  grid-column: 3;
 }
 
 .lightbox__footer {
@@ -273,11 +297,14 @@
 }
 
 @media (max-width: 640px) {
-  .lightbox__nav {
+  .lightbox__nav-zone {
+    min-width: clamp(2.75rem, 16vw, 4rem);
+  }
+
+  .lightbox__nav-icon {
     width: 36px;
     height: 36px;
     font-size: 0.95rem;
-    margin-inline: 0.15rem;
   }
 
   .lightbox__footer {

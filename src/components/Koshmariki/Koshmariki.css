@@ -197,30 +197,63 @@
   z-index: 1;
 }
 
-.koshmariki__lightbox-nav {
+.koshmariki__lightbox-nav-zone {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
+  bottom: 0;
+  width: clamp(3.25rem, 14vw, 5.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.25s;
+}
+
+.koshmariki__lightbox-nav-zone:disabled {
+  cursor: not-allowed;
+}
+
+.koshmariki__lightbox-nav-zone:not(:disabled):hover,
+.koshmariki__lightbox-nav-zone:not(:disabled):focus-visible {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.koshmariki__lightbox-nav-zone--prev {
+  left: 0;
+}
+
+.koshmariki__lightbox-nav-zone--next {
+  right: 0;
+}
+
+.koshmariki__lightbox-nav-icon {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
   font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 10, 0.45);
   transition: background 0.25s;
+  pointer-events: none;
 }
 
-.koshmariki__lightbox-nav:disabled {
+.koshmariki__lightbox-nav-zone:disabled .koshmariki__lightbox-nav-icon {
   opacity: 0.2;
-  cursor: not-allowed;
 }
 
-.koshmariki__lightbox-nav:not(:disabled):hover {
+.koshmariki__lightbox-nav-zone:not(:disabled):hover .koshmariki__lightbox-nav-icon,
+.koshmariki__lightbox-nav-zone:not(:disabled):focus-visible .koshmariki__lightbox-nav-icon {
   background: rgba(255, 255, 255, 0.12);
 }
-
-.koshmariki__lightbox-nav--prev { left: var(--container-padding); }
-.koshmariki__lightbox-nav--next { right: var(--container-padding); }
 
 @media (max-width: 900px) {
   .koshmariki__grid {

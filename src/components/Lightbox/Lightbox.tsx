@@ -112,12 +112,14 @@ export function Lightbox() {
 
       <button
         type="button"
-        className="lightbox__nav lightbox__nav--prev"
-        onClick={prev}
-        disabled={!hasPrev}
-        aria-label="Предыдущая работа"
+        className="lightbox__nav-zone lightbox__nav-zone--prev"
+        onClick={swipeRight}
+        disabled={!hasPrev && !(multipleViews && hasViewPrev)}
+        aria-label="Предыдущая"
       >
-        ←
+        <span className="lightbox__nav-icon" aria-hidden="true">
+          ←
+        </span>
       </button>
 
       <div className={`lightbox__viewer${multipleViews ? ' lightbox__viewer--album' : ''}`}>
@@ -158,12 +160,14 @@ export function Lightbox() {
 
       <button
         type="button"
-        className="lightbox__nav lightbox__nav--next"
-        onClick={next}
-        disabled={!hasNext}
-        aria-label="Следующая работа"
+        className="lightbox__nav-zone lightbox__nav-zone--next"
+        onClick={swipeLeft}
+        disabled={!hasNext && !(multipleViews && hasViewNext)}
+        aria-label="Следующая"
       >
-        →
+        <span className="lightbox__nav-icon" aria-hidden="true">
+          →
+        </span>
       </button>
 
       <div className="lightbox__footer">

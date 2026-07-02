@@ -99,29 +99,33 @@ export function Koshmariki() {
               </button>
             </div>
 
-            <button
-              type="button"
-              className="koshmariki__lightbox-nav koshmariki__lightbox-nav--prev"
-              onClick={prev}
-              disabled={!hasPrev}
-              aria-label="Предыдущая"
-            >
+          <button
+            type="button"
+            className="koshmariki__lightbox-nav-zone koshmariki__lightbox-nav-zone--prev"
+            onClick={prev}
+            disabled={!hasPrev}
+            aria-label="Предыдущая"
+          >
+            <span className="koshmariki__lightbox-nav-icon" aria-hidden="true">
               ←
-            </button>
+            </span>
+          </button>
 
             <div ref={stageRef} className="koshmariki__lightbox-stage">
               <img className="koshmariki__lightbox-img" src={selected.img} alt={selected.title} />
             </div>
 
-            <button
-              type="button"
-              className="koshmariki__lightbox-nav koshmariki__lightbox-nav--next"
-              onClick={next}
-              disabled={!hasNext}
-              aria-label="Следующая"
-            >
+          <button
+            type="button"
+            className="koshmariki__lightbox-nav-zone koshmariki__lightbox-nav-zone--next"
+            onClick={next}
+            disabled={!hasNext}
+            aria-label="Следующая"
+          >
+            <span className="koshmariki__lightbox-nav-icon" aria-hidden="true">
               →
-            </button>
+            </span>
+          </button>
 
             <p className="koshmariki__lightbox-title">{selected.title}</p>
           </div>,

@@ -21,7 +21,7 @@ export function useLockBodyScroll(locked: boolean): void {
       style.position = prevPosition;
       style.top = prevTop;
       style.width = prevWidth;
-      window.scrollTo(0, scrollY);
+      window.scrollTo({ left: 0, top: scrollY, behavior: 'instant' });
     };
   }, [locked]);
 }

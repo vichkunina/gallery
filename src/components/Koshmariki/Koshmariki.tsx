@@ -1,9 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { koshmariki } from '../../data/koshmariki';
 import { stickerZones } from '../../data/stickers';
 import { useLightboxKeyboard } from '../../hooks/useLightboxKeyboard';
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll';
+import { useSwipeNavigation } from '../../hooks/useSwipeNavigation';
 import { useReveal } from '../../hooks/useReveal';
+import { mediaThumbUrl } from '../../config/media';
 import type { KoshmarikiItem } from '../../types';
 import { ArtImage } from '../ArtImage/ArtImage';
 import { StickerField } from '../Stickers/StickerField';
@@ -12,6 +14,7 @@ import './Koshmariki.css';
 export function Koshmariki() {
   const { ref, visible } = useReveal(0.12);
   const [selected, setSelected] = useState<KoshmarikiItem | null>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const items = koshmariki.items;
   const selectedIndex = selected ? items.findIndex((item) => item.id === selected.id) : -1;
   const hasPrev = selectedIndex > 0;
@@ -27,6 +30,10 @@ export function Koshmariki() {
 
   useLockBodyScroll(selected !== null);
   useLightboxKeyboard(selected !== null, { close, next, prev, hasNext, hasPrev });
+  useSwipeNavigation(stageRef, selected !== null, {
+    onSwipeLeft: hasNext ? next : undefined,
+    onSwipeRight: hasPrev ? prev : undefined,
+  });
 
   return (
     <section
@@ -56,9 +63,9 @@ export function Koshmariki() {
             >
               <div className="koshmariki__card-media">
                 <ArtImage
-                  src={item.img}
+                  src={mediaThumbUrl(item.img)}
                   alt={`${item.title} — серия Кошмарики, Дарья Вичкунина`}
-                  loading="lazy"
+                  loading={index < 4 ? 'eager' : 'lazy'}
                   fit="contain"
                 />
                 <span className="koshmariki__card-overlay">
@@ -76,10 +83,14 @@ export function Koshmariki() {
           role="dialog"
           aria-modal="true"
           aria-label={selected.title}
-          onClick={(event) => {
-            if (event.target === event.currentTarget) close();
-          }}
         >
+          <button
+            type="button"
+            className="koshmariki__lightbox-backdrop"
+            aria-label="Закрыть"
+            onClick={close}
+          />
+
           <div className="koshmariki__lightbox-top">
             <span className="koshmariki__lightbox-counter">
               {selectedIndex + 1} / {items.length}
@@ -99,7 +110,9 @@ export function Koshmariki() {
             ←
           </button>
 
-          <img className="koshmariki__lightbox-img" src={selected.img} alt={selected.title} />
+          <div ref={stageRef} className="koshmariki__lightbox-stage">
+            <img className="koshmariki__lightbox-img" src={selected.img} alt={selected.title} />
+          </div>
 
           <button
             type="button"

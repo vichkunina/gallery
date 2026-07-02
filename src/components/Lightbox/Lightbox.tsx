@@ -1,8 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useGallery } from '../../context/GalleryContext';
+import { useGalleryLightboxNavigation } from '../../hooks/useGalleryLightboxNavigation';
 import { useLightboxKeyboard } from '../../hooks/useLightboxKeyboard';
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll';
-import { artworkAlt } from '../../utils/seoAlt';
+import { useSwipeNavigation } from '../../hooks/useSwipeNavigation';
+import { artworkViewAlt, getArtworkViews, hasMultipleViews } from '../../utils/artworkViews';
+import { mediaThumbUrl } from '../../config/media';
 import './Lightbox.css';
 
 export function Lightbox() {
@@ -15,14 +18,55 @@ export function Lightbox() {
     prev,
     hasNext,
     hasPrev,
+    viewIndex,
+    setViewIndex,
   } = useGallery();
+
+  const views = useMemo(() => (selected ? getArtworkViews(selected) : []), [selected]);
+  const currentView = views[viewIndex] ?? views[0];
+  const multipleViews = selected ? hasMultipleViews(selected) : false;
 
   const isOpen = selected !== null;
   const closeRef = useRef<HTMLButtonElement>(null);
   const prevFocus = useRef<HTMLElement | null>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!selected || views.length === 0) return;
+    if (viewIndex >= views.length) {
+      setViewIndex(0);
+    }
+  }, [selected, views.length, viewIndex, setViewIndex]);
+
+  const { viewPrev, viewNext, swipeLeft, swipeRight, hasViewPrev, hasViewNext } =
+    useGalleryLightboxNavigation({
+      multipleViews,
+      viewIndex,
+      viewCount: views.length,
+      setViewIndex,
+      hasNext,
+      hasPrev,
+      next,
+      prev,
+    });
+
+  useSwipeNavigation(stageRef, isOpen, {
+    onSwipeLeft: swipeLeft,
+    onSwipeRight: swipeRight,
+  });
 
   useLockBodyScroll(isOpen);
-  useLightboxKeyboard(isOpen, { close, next, prev, hasNext, hasPrev });
+  useLightboxKeyboard(isOpen, {
+    close,
+    next,
+    prev,
+    hasNext,
+    hasPrev,
+    viewPrev: multipleViews ? viewPrev : undefined,
+    viewNext: multipleViews ? viewNext : undefined,
+    hasViewPrev,
+    hasViewNext,
+  });
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -31,11 +75,11 @@ export function Lightbox() {
     closeRef.current?.focus();
 
     return () => {
-      prevFocus.current?.focus();
+      prevFocus.current?.focus({ preventScroll: true });
     };
   }, [isOpen]);
 
-  if (!selected) return null;
+  if (!selected || !currentView) return null;
 
   return (
     <div
@@ -43,67 +87,102 @@ export function Lightbox() {
       role="dialog"
       aria-modal="true"
       aria-label={selected.title}
-      onClick={(event) => {
-        if (event.target === event.currentTarget) close();
-      }}
     >
+      <button type="button" className="lightbox__backdrop" aria-label="Закрыть" onClick={close} />
+
       <div className="lightbox__topbar">
-        <span className="lightbox__counter">
-          {selectedIndex + 1} / {total}
-        </span>
+        <div className="lightbox__topbar-start">
+          <span className="lightbox__counter">
+            {selectedIndex + 1} / {total}
+            {multipleViews && (
+              <span className="lightbox__view-counter">
+                {' '}
+                · {viewIndex + 1}/{views.length}
+              </span>
+            )}
+          </span>
+          <h3 className="lightbox__title">{selected.title}</h3>
+        </div>
         <button ref={closeRef} type="button" className="lightbox__close" onClick={close}>
           Закрыть ✕
         </button>
       </div>
 
-      <div className="lightbox__inner">
-        <div className="lightbox__img-col">
-          <button
-            type="button"
-            className="lightbox__nav lightbox__nav--prev"
-            onClick={prev}
-            disabled={!hasPrev}
-            aria-label="Предыдущая работа"
-          >
-            ←
-          </button>
+      <button
+        type="button"
+        className="lightbox__nav lightbox__nav--prev"
+        onClick={prev}
+        disabled={!hasPrev}
+        aria-label="Предыдущая работа"
+      >
+        ←
+      </button>
 
-          <div className="lightbox__img-wrap">
-            <img
-              key={selected.id}
-              className="lightbox__img"
-              src={selected.img}
-              alt={artworkAlt(selected)}
-            />
-          </div>
-
-          <button
-            type="button"
-            className="lightbox__nav lightbox__nav--next"
-            onClick={next}
-            disabled={!hasNext}
-            aria-label="Следующая работа"
-          >
-            →
-          </button>
+      <div className={`lightbox__viewer${multipleViews ? ' lightbox__viewer--album' : ''}`}>
+        <div
+          ref={stageRef}
+          className="lightbox__stage"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) close();
+          }}
+        >
+          <img
+            key={`${selected.id}-${viewIndex}`}
+            className="lightbox__img"
+            src={currentView.src}
+            alt={artworkViewAlt(selected, currentView)}
+            decoding="sync"
+          />
         </div>
 
-        <div className="lightbox__info">
-          <h3 className="lightbox__title">{selected.title}</h3>
-          <p className="lightbox__desc">{selected.desc}</p>
+        {multipleViews && (
+          <div className="lightbox__filmstrip" role="tablist" aria-label="Фото работы">
+            {views.map((view, index) => (
+              <button
+                key={`${view.src}-${index}`}
+                type="button"
+                role="tab"
+                className={`lightbox__thumb${index === viewIndex ? ' lightbox__thumb--active' : ''}`}
+                aria-selected={index === viewIndex}
+                aria-label={view.label ?? `Фото ${index + 1}`}
+                onClick={() => setViewIndex(index)}
+              >
+                <img src={mediaThumbUrl(view.src)} alt="" loading="lazy" decoding="async" />
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <button
+        type="button"
+        className="lightbox__nav lightbox__nav--next"
+        onClick={next}
+        disabled={!hasNext}
+        aria-label="Следующая работа"
+      >
+        →
+      </button>
+
+      <div className="lightbox__footer">
+        <div className="lightbox__footer-text">
+          {currentView.label && multipleViews && (
+            <p className="lightbox__view-label">{currentView.label}</p>
+          )}
+          {selected.desc ? <p className="lightbox__desc">{selected.desc}</p> : null}
           {(selected.details || selected.size !== '—') && (
             <p className="lightbox__meta">
               {[selected.size !== '—' ? selected.size : '', selected.details].filter(Boolean).join(' · ')}
             </p>
           )}
-          {selected.available ? (
-            <a href="#contact" className="lightbox__buy" onClick={close}>
-              Написать о покупке →
-            </a>
-          ) : (
-            <p className="lightbox__sold-note">Эта работа уже нашла дом</p>
-          )}
         </div>
+        {selected.available ? (
+          <a href="#contact" className="lightbox__buy" onClick={close}>
+            Написать о покупке →
+          </a>
+        ) : (
+          <p className="lightbox__sold-note">Эта работа уже нашла дом</p>
+        )}
       </div>
     </div>
   );

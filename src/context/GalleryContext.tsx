@@ -2,71 +2,174 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
 import { artworks } from '../data/artworks';
 import type { Artwork } from '../types';
+import { getArtworkViews, hasMultipleViews } from '../utils/artworkViews';
+import {
+  parseWorkIdFromLocation,
+  parseWorkViewFromLocation,
+  syncWorkUrl,
+} from '../utils/galleryUrl';
+import { buildArtworkIndexById } from '../utils/validateArtworkIds';
 
 interface GalleryContextValue {
   selected: Artwork | null;
   selectedIndex: number;
   total: number;
+  viewIndex: number;
   select: (art: Artwork) => void;
   close: () => void;
   next: () => void;
   prev: () => void;
+  setViewIndex: (index: number) => void;
   hasNext: boolean;
   hasPrev: boolean;
 }
 
 const GalleryContext = createContext<GalleryContextValue | null>(null);
 
-const artworkIndexById = new Map(artworks.map((artwork, index) => [artwork.id, index]));
+const artworkIndexById = buildArtworkIndexById(artworks);
+
+function resolveWorkIndex(id: number | null): number | null {
+  if (id === null) return null;
+  const index = artworkIndexById.get(id);
+  return index === undefined ? null : index;
+}
+
+function clampViewIndex(workIndex: number, view: number): number {
+  const art = artworks[workIndex];
+  if (!art) return 0;
+  const maxIndex = getArtworkViews(art).length - 1;
+  return Math.min(Math.max(0, view), maxIndex);
+}
+
+function isMultiViewWork(workIndex: number | null): boolean {
+  if (workIndex === null) return false;
+  const art = artworks[workIndex];
+  return art ? hasMultipleViews(art) : false;
+}
 
 export function GalleryProvider({ children }: { children: ReactNode }) {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const openedViaPush = useRef(false);
 
-  const selectedIndex =
-    selectedId === null ? -1 : (artworkIndexById.get(selectedId) ?? -1);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(() =>
+    resolveWorkIndex(parseWorkIdFromLocation(window.location)),
+  );
+  const [viewIndex, setViewIndexState] = useState(() => {
+    const workIndex = resolveWorkIndex(parseWorkIdFromLocation(window.location));
+    if (workIndex === null) return 0;
+    return clampViewIndex(workIndex, parseWorkViewFromLocation(window.location));
+  });
 
-  const selected = selectedIndex >= 0 ? artworks[selectedIndex] : null;
+  const selected = selectedIndex === null ? null : (artworks[selectedIndex] ?? null);
 
-  const select = useCallback((art: Artwork) => setSelectedId(art.id), []);
-  const close = useCallback(() => setSelectedId(null), []);
+  const syncUrl = useCallback(
+    (workIndex: number | null, view: number, mode: 'push' | 'replace') => {
+      const workId = workIndex === null ? null : artworks[workIndex]?.id ?? null;
+      const clampedView = workIndex === null ? 0 : clampViewIndex(workIndex, view);
+      syncWorkUrl(workId, clampedView, mode, isMultiViewWork(workIndex));
+    },
+    [],
+  );
+
+  const setViewIndex = useCallback(
+    (index: number) => {
+      if (selectedIndex === null) return;
+      const clamped = clampViewIndex(selectedIndex, index);
+      setViewIndexState(clamped);
+      syncUrl(selectedIndex, clamped, 'replace');
+    },
+    [selectedIndex, syncUrl],
+  );
+
+  const select = useCallback(
+    (art: Artwork) => {
+      const index = artworks.indexOf(art);
+      if (index === -1) return;
+
+      const wasClosed = selectedIndex === null;
+      setSelectedIndex(index);
+      setViewIndexState(0);
+      syncUrl(index, 0, wasClosed ? 'push' : 'replace');
+      if (wasClosed) openedViaPush.current = true;
+    },
+    [selectedIndex, syncUrl],
+  );
+
+  const close = useCallback(() => {
+    setSelectedIndex(null);
+    setViewIndexState(0);
+
+    if (openedViaPush.current && parseWorkIdFromLocation(window.location) !== null) {
+      openedViaPush.current = false;
+      history.back();
+      return;
+    }
+
+    syncUrl(null, 0, 'replace');
+  }, [syncUrl]);
 
   const next = useCallback(() => {
-    setSelectedId((id) => {
-      if (id === null) return id;
-      const index = artworkIndexById.get(id);
-      if (index === undefined || index >= artworks.length - 1) return id;
-      return artworks[index + 1].id;
+    setSelectedIndex((index) => {
+      if (index === null || index >= artworks.length - 1) return index;
+      const nextIndex = index + 1;
+      setViewIndexState(0);
+      syncUrl(nextIndex, 0, 'replace');
+      return nextIndex;
     });
-  }, []);
+  }, [syncUrl]);
 
   const prev = useCallback(() => {
-    setSelectedId((id) => {
-      if (id === null) return id;
-      const index = artworkIndexById.get(id);
-      if (index === undefined || index <= 0) return id;
-      return artworks[index - 1].id;
+    setSelectedIndex((index) => {
+      if (index === null || index <= 0) return index;
+      const prevIndex = index - 1;
+      setViewIndexState(0);
+      syncUrl(prevIndex, 0, 'replace');
+      return prevIndex;
     });
+  }, [syncUrl]);
+
+  useEffect(() => {
+    const applyLocation = () => {
+      const workIndex = resolveWorkIndex(parseWorkIdFromLocation(window.location));
+      const view =
+        workIndex === null ? 0 : clampViewIndex(workIndex, parseWorkViewFromLocation(window.location));
+      setSelectedIndex(workIndex);
+      setViewIndexState(view);
+      if (workIndex === null) openedViaPush.current = false;
+    };
+
+    window.addEventListener('popstate', applyLocation);
+    window.addEventListener('hashchange', applyLocation);
+    return () => {
+      window.removeEventListener('popstate', applyLocation);
+      window.removeEventListener('hashchange', applyLocation);
+    };
   }, []);
+
+  const resolvedIndex = selectedIndex ?? -1;
 
   const value = useMemo<GalleryContextValue>(
     () => ({
       selected,
-      selectedIndex,
+      selectedIndex: resolvedIndex,
       total: artworks.length,
+      viewIndex,
       select,
       close,
       next,
       prev,
-      hasNext: selectedIndex >= 0 && selectedIndex < artworks.length - 1,
-      hasPrev: selectedIndex > 0,
+      setViewIndex,
+      hasNext: resolvedIndex >= 0 && resolvedIndex < artworks.length - 1,
+      hasPrev: resolvedIndex > 0,
     }),
-    [selected, selectedIndex, select, close, next, prev],
+    [selected, resolvedIndex, viewIndex, select, close, next, prev, setViewIndex],
   );
 
   return <GalleryContext.Provider value={value}>{children}</GalleryContext.Provider>;

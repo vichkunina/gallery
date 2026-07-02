@@ -28,7 +28,8 @@ while IFS= read -r -d '' file; do
   echo "upload: ${rel} (${mime})"
   yc --profile "${PROFILE}" storage s3 cp \
     "${file}" "s3://${BUCKET}/${rel}" \
-    --content-type "${mime}"
+    --content-type "${mime}" \
+    --cache-control "public, max-age=31536000, no-transform"
 done < <(find "${MEDIA_DIR}" -type f -print0)
 
 echo "Done. Files are served from:"

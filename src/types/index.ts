@@ -1,5 +1,10 @@
 export type ArtCategory = 'oil' | 'watercolor' | 'mixed';
 
+export interface ArtworkView {
+  src: string;
+  label?: string;
+}
+
 export interface Artwork {
   id: number;
   title: string;
@@ -8,6 +13,8 @@ export interface Artwork {
   size: string;
   desc: string;
   img: string;
+  /** Extra shots: details, texture, process. First entry can repeat cover `img`. */
+  views?: ArtworkView[];
   available: boolean;
 }
 
@@ -39,7 +46,6 @@ export interface SiteContent {
   processTitle: string;
   processSteps: ProcessStep[];
   contacts: Contact[];
-  contactNote: string;
 }
 
 export interface KoshmarikiItem {

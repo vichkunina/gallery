@@ -40,8 +40,6 @@ export function Contact() {
           ))}
         </div>
 
-        <p className="contact__note">{site.contactNote}</p>
-
         <div className="contact__order sticker-zone">
           <StickerField items={stickerZones.contactOrder} />
           <h3 className="contact__order-title">{site.processTitle}</h3>

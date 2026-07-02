@@ -35,8 +35,8 @@ upload_tree() {
 
     echo "upload: ${key} (${mime})"
     local cache_control=""
-    if [[ "$rel" == "index.html" || "$rel" == icons/* || "$rel" == favicon*.png || "$rel" == "apple-touch-icon.png" ]]; then
-      cache_control="no-cache, max-age=0"
+    if [[ "$rel" == "index.html" || "$rel" == "og.jpg" || "$rel" == icons/* || "$rel" == favicon*.png || "$rel" == "apple-touch-icon.png" ]]; then
+      cache_control="no-cache, no-store, must-revalidate, max-age=0"
     fi
     if [[ -n "$cache_control" ]]; then
       yc --profile "${PROFILE}" storage s3 cp \

@@ -128,14 +128,42 @@
   position: fixed;
   inset: 0;
   z-index: var(--z-lightbox);
-  background: rgba(10, 10, 10, 0.92);
-  backdrop-filter: blur(16px);
+  background: transparent;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 2rem;
   animation: kosh-fade-in 0.35s var(--ease-out);
+}
+
+.koshmariki__lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  cursor: default;
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(16px);
+  z-index: 0;
+}
+
+.koshmariki__lightbox-top,
+.koshmariki__lightbox-nav,
+.koshmariki__lightbox-stage,
+.koshmariki__lightbox-title {
+  position: relative;
+  z-index: 1;
+}
+
+.koshmariki__lightbox-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-height: 80vh;
+  touch-action: pan-y pinch-zoom;
 }
 
 @keyframes kosh-fade-in {

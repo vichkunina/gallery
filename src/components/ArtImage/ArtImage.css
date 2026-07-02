@@ -36,19 +36,13 @@
   object-fit: cover;
   object-position: center;
   opacity: 0;
-  transform: scale(1.02);
-  transition:
-    opacity 0.55s var(--ease-out),
-    transform 0.8s var(--ease-out);
+  transition: opacity 0.45s var(--ease-out);
   image-rendering: auto;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
   border-radius: inherit;
 }
 
 .art-image--loaded .art-image__img {
   opacity: 1;
-  transform: scale(1);
 }
 
 .art-image--contain {

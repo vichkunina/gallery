@@ -11,3 +11,17 @@ export function mediaUrl(path: string): string {
   }
   return `${base.replace(/\/$/, '')}/${normalized}`;
 }
+
+/** Card/thumbnail URL derived from a full gallery or koshmariki image URL. */
+export function mediaThumbUrl(src: string): string {
+  if (src.includes('/images/gallery/thumbs/') || src.includes('/images/koshmariki/thumbs/')) {
+    return src;
+  }
+  if (src.includes('/images/gallery/')) {
+    return src.replace('/images/gallery/', '/images/gallery/thumbs/').replace(/\.(webp|png|jpe?g)$/i, '.jpg');
+  }
+  if (src.includes('/images/koshmariki/')) {
+    return src.replace('/images/koshmariki/', '/images/koshmariki/thumbs/').replace(/\.(webp|png|jpe?g)$/i, '.jpg');
+  }
+  return src;
+}

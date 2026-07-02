@@ -8,6 +8,7 @@ interface ArtImageProps {
   loading?: 'eager' | 'lazy';
   fit?: 'cover' | 'contain';
   priority?: boolean;
+  onDimensions?: (width: number, height: number) => void;
 }
 
 export function ArtImage({
@@ -17,6 +18,7 @@ export function ArtImage({
   loading = 'lazy',
   fit = 'cover',
   priority = false,
+  onDimensions,
 }: ArtImageProps) {
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -41,7 +43,13 @@ export function ArtImage({
         loading={priority ? 'eager' : loading}
         decoding="async"
         {...(priority ? { fetchpriority: 'high' as const } : {})}
-        onLoad={() => setLoaded(true)}
+        onLoad={(event) => {
+          setLoaded(true);
+          const { naturalWidth, naturalHeight } = event.currentTarget;
+          if (naturalWidth > 0 && naturalHeight > 0) {
+            onDimensions?.(naturalWidth, naturalHeight);
+          }
+        }}
         onError={() => setFailed(true)}
       />
     </div>

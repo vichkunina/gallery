@@ -94,7 +94,7 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
 
   const select = useCallback(
     (art: Artwork) => {
-      const index = artworks.indexOf(art);
+      const index = artworks.findIndex((item) => item.id === art.id);
       if (index === -1) return;
 
       const wasClosed = selectedIndex === null;

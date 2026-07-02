@@ -368,6 +368,20 @@ export const artworks: Artwork[] = [
     available: true,
   },
   {
+    id: 34,
+    title: '8 октября 2023',
+    category: 'mixed',
+    details: '—',
+    size: '—',
+    desc: '',
+    img: mediaUrl('images/gallery/34-2023-10-08-01.jpg'),
+    views: [
+      { src: mediaUrl('images/gallery/34-2023-10-08-01.jpg'), label: 'Фото 1' },
+      { src: mediaUrl('images/gallery/34-2023-10-08-02.jpg'), label: 'Фото 2' },
+    ],
+    available: true,
+  },
+  {
     id: 35,
     title: '1 октября 2023',
     category: 'mixed',
@@ -378,6 +392,10 @@ export const artworks: Artwork[] = [
     views: [
       { src: mediaUrl('images/gallery/35-2023-10-01-01.jpg'), label: 'Фото 1' },
       { src: mediaUrl('images/gallery/35-2023-10-01-02.jpg'), label: 'Фото 2' },
+      { src: mediaUrl('images/gallery/35-2023-10-01-03.jpg'), label: 'Фото 3' },
+      { src: mediaUrl('images/gallery/35-2023-10-01-04.jpg'), label: 'Фото 4' },
+      { src: mediaUrl('images/gallery/35-2023-10-01-05.jpg'), label: 'Фото 5' },
+      { src: mediaUrl('images/gallery/35-2023-10-01-06.jpg'), label: 'Фото 6' },
     ],
     available: true,
   },

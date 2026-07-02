@@ -34,16 +34,22 @@ export function useLightboxKeyboard(isOpen: boolean, handlers: LightboxKeyboardH
 
       if (event.key === 'Escape') close();
 
-      if (event.key === 'ArrowRight' && hasNext) next();
-      if (event.key === 'ArrowLeft' && hasPrev) prev();
-
-      if (event.key === 'ArrowDown' && hasViewNext && viewNext) {
-        event.preventDefault();
-        viewNext();
+      if (event.key === 'ArrowRight') {
+        if (hasViewNext && viewNext) {
+          event.preventDefault();
+          viewNext();
+        } else if (hasNext) {
+          next();
+        }
       }
-      if (event.key === 'ArrowUp' && hasViewPrev && viewPrev) {
-        event.preventDefault();
-        viewPrev();
+
+      if (event.key === 'ArrowLeft') {
+        if (hasViewPrev && viewPrev) {
+          event.preventDefault();
+          viewPrev();
+        } else if (hasPrev) {
+          prev();
+        }
       }
     };
 

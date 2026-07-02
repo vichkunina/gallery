@@ -64,8 +64,8 @@ export function Lightbox() {
     hasPrev,
     viewPrev: multipleViews ? viewPrev : undefined,
     viewNext: multipleViews ? viewNext : undefined,
-    hasViewPrev,
-    hasViewNext,
+    hasViewPrev: multipleViews && hasViewPrev,
+    hasViewNext: multipleViews && hasViewNext,
   });
 
   useEffect(() => {

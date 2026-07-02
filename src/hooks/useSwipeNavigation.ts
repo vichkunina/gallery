@@ -31,6 +31,15 @@ export function useSwipeNavigation(
       tracking = true;
     };
 
+    const onTouchMove = (event: TouchEvent) => {
+      if (!tracking || event.touches.length !== 1) return;
+      const dx = event.touches[0].clientX - startX;
+      const dy = event.touches[0].clientY - startY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10) {
+        event.preventDefault();
+      }
+    };
+
     const onTouchEnd = (event: TouchEvent) => {
       if (!tracking) return;
       tracking = false;
@@ -46,10 +55,12 @@ export function useSwipeNavigation(
     };
 
     el.addEventListener('touchstart', onTouchStart, { passive: true });
+    el.addEventListener('touchmove', onTouchMove, { passive: false });
     el.addEventListener('touchend', onTouchEnd, { passive: true });
 
     return () => {
       el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchmove', onTouchMove);
       el.removeEventListener('touchend', onTouchEnd);
     };
   }, [ref, enabled, threshold, handlersRef]);

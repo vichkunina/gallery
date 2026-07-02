@@ -4,6 +4,11 @@ const WORK_PREFIX = 'work';
 const LEGACY_WORK_LINKS: Record<string, { workId: number; viewIndex?: number }> = {
   'work/39/3': { workId: 41 },
   'work/26/3': { workId: 43 },
+  'work/13/4': { workId: 13, viewIndex: 0 },
+  'work/13/1': { workId: 13, viewIndex: 3 },
+  'work/14': { workId: 13, viewIndex: 1 },
+  'work/14/2': { workId: 13, viewIndex: 2 },
+  'work/15': { workId: 13, viewIndex: 0 },
 };
 
 export function isLegacyWorkHash(location: Pick<Location, 'hash'>): boolean {

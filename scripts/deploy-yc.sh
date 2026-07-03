@@ -12,6 +12,7 @@ content_type_for() {
     *.js) echo 'application/javascript; charset=utf-8' ;;
     *.json) echo 'application/json; charset=utf-8' ;;
     *.xml) echo 'application/xml; charset=utf-8' ;;
+    *.ico) echo 'image/x-icon' ;;
     *.txt) echo 'text/plain; charset=utf-8' ;;
     *.svg) echo 'image/svg+xml' ;;
     *.png) echo 'image/png' ;;
@@ -35,7 +36,7 @@ upload_tree() {
 
     echo "upload: ${key} (${mime})"
     local cache_control=""
-    if [[ "$rel" == "index.html" || "$rel" == "og.jpg" || "$rel" == icons/* || "$rel" == favicon*.png || "$rel" == "apple-touch-icon.png" ]]; then
+    if [[ "$rel" == "index.html" || "$rel" == "og.jpg" || "$rel" == "favicon.ico" || "$rel" == icons/* || "$rel" == favicon*.png || "$rel" == "apple-touch-icon.png" || "$rel" == work/*/index.html ]]; then
       cache_control="no-cache, no-store, must-revalidate, max-age=0"
     fi
     if [[ -n "$cache_control" ]]; then

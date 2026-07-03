@@ -6,7 +6,10 @@ import { useLightboxKeyboard } from '../../hooks/useLightboxKeyboard';
 import { useLightboxPageLock } from '../../hooks/useLightboxPageLock';
 import { useSwipeNavigation } from '../../hooks/useSwipeNavigation';
 import { artworkViewAlt, getArtworkViews, hasMultipleViews } from '../../utils/artworkViews';
+import { getArtworkDisplayName } from '../../utils/artworkDisplay';
 import { mediaThumbUrl } from '../../config/media';
+import { getArtworkSaleStatus } from '../../config/artworkSaleStatus';
+import { ArtworkInfo } from '../ArtworkInfo/ArtworkInfo';
 import './Lightbox.css';
 
 export function Lightbox() {
@@ -87,24 +90,21 @@ export function Lightbox() {
       className="lightbox lightbox--open"
       role="dialog"
       aria-modal="true"
-      aria-label={selected.title}
+      aria-label={getArtworkDisplayName(selected)}
       onClick={(event) => {
         if (event.target === event.currentTarget) close();
       }}
     >
       <div className="lightbox__topbar">
-        <div className="lightbox__topbar-start">
-          <span className="lightbox__counter">
-            {selectedIndex + 1} / {total}
-            {multipleViews && (
-              <span className="lightbox__view-counter">
-                {' '}
-                · {viewIndex + 1}/{views.length}
-              </span>
-            )}
-          </span>
-          <h3 className="lightbox__title">{selected.title}</h3>
-        </div>
+        <span className="lightbox__counter">
+          {selectedIndex + 1} / {total}
+          {multipleViews && (
+            <span className="lightbox__view-counter">
+              {' '}
+              · {viewIndex + 1}/{views.length}
+            </span>
+          )}
+        </span>
         <button ref={closeRef} type="button" className="lightbox__close" onClick={close}>
           Закрыть ✕
         </button>
@@ -158,6 +158,24 @@ export function Lightbox() {
         )}
       </div>
 
+      <aside className="lightbox__aside" aria-label="О работе">
+        {currentView.label && multipleViews && (
+          <p className="lightbox__view-label">{currentView.label}</p>
+        )}
+        <ArtworkInfo art={selected} variant="lightbox" description />
+        <div className="lightbox__aside-action">
+          {getArtworkSaleStatus(selected.id) === 'for_sale' ? (
+            <a href="#contact" className="lightbox__buy" onClick={close}>
+              Написать о покупке →
+            </a>
+          ) : getArtworkSaleStatus(selected.id) === 'sold' ? (
+            <p className="lightbox__sold-note">Эта работа уже нашла дом</p>
+          ) : (
+            <p className="lightbox__sold-note">Не продаётся</p>
+          )}
+        </div>
+      </aside>
+
       <button
         type="button"
         className="lightbox__nav-zone lightbox__nav-zone--next"
@@ -175,19 +193,16 @@ export function Lightbox() {
           {currentView.label && multipleViews && (
             <p className="lightbox__view-label">{currentView.label}</p>
           )}
-          {selected.desc ? <p className="lightbox__desc">{selected.desc}</p> : null}
-          {(selected.details || selected.size !== '—') && (
-            <p className="lightbox__meta">
-              {[selected.size !== '—' ? selected.size : '', selected.details].filter(Boolean).join(' · ')}
-            </p>
-          )}
+          <ArtworkInfo art={selected} variant="lightbox" description />
         </div>
-        {selected.available ? (
+        {getArtworkSaleStatus(selected.id) === 'for_sale' ? (
           <a href="#contact" className="lightbox__buy" onClick={close}>
             Написать о покупке →
           </a>
-        ) : (
+        ) : getArtworkSaleStatus(selected.id) === 'sold' ? (
           <p className="lightbox__sold-note">Эта работа уже нашла дом</p>
+        ) : (
+          <p className="lightbox__sold-note">Не продаётся</p>
         )}
       </div>
     </div>,

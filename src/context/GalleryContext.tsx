@@ -18,6 +18,7 @@ import {
   syncWorkUrl,
 } from '../utils/galleryUrl';
 import { buildArtworkIndexById } from '../utils/validateArtworkIds';
+import { useArtworkPageMeta } from '../hooks/useArtworkPageMeta';
 
 interface GalleryContextValue {
   selected: Artwork | null;
@@ -72,6 +73,8 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
   });
 
   const selected = selectedIndex === null ? null : (artworks[selectedIndex] ?? null);
+
+  useArtworkPageMeta(selected, viewIndex);
 
   const syncUrl = useCallback(
     (workIndex: number | null, view: number, mode: 'push' | 'replace') => {

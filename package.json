@@ -9,9 +9,11 @@
     "preview": "vite preview",
     "deploy:yc": "bash scripts/deploy-yc.sh",
     "upload:media": "node scripts/generate-thumbs.mjs && bash scripts/upload-media.sh",
+    "upload:media:files": "bash scripts/upload-media-files.sh",
     "import:desktop": "bash scripts/import-desktop.sh",
     "sync:desktop": "node scripts/sync-from-desktop.mjs",
-    "thumbs": "node scripts/generate-thumbs.mjs"
+    "thumbs": "node scripts/generate-thumbs.mjs",
+    "seo:notify-yandex": "node scripts/notify-yandex-indexnow.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

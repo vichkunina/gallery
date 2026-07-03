@@ -1,0 +1,135 @@
+.artwork-info__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.artwork-info__name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.25;
+  min-width: 0;
+}
+
+.artwork-info__price {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* —— card (лента) —— */
+.artwork-info--card {
+  margin-top: 0.1rem;
+}
+
+.artwork-info--card .artwork-info__name {
+  font-size: 0.95rem;
+  color: var(--color-text);
+  transition: color 0.35s;
+}
+
+.gallery__card:hover .artwork-info--card .artwork-info__name {
+  color: var(--color-text);
+}
+
+.artwork-info--card .artwork-info__price {
+  color: var(--color-text-soft);
+}
+
+.artwork-info--card .artwork-info__meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.7rem;
+  color: var(--color-muted);
+  letter-spacing: 0.02em;
+}
+
+.artwork-info--card .artwork-info__desc {
+  margin: 0.35rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--color-text-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* —— lightbox —— */
+.artwork-info--lightbox .artwork-info__name {
+  font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+  color: rgba(255, 255, 255, 0.94);
+  margin: 0;
+}
+
+.artwork-info--lightbox .artwork-info__facts {
+  margin: 0.75rem 0 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.artwork-info--lightbox .artwork-info__fact {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0.65rem;
+  align-items: baseline;
+  margin: 0;
+}
+
+.artwork-info--lightbox .artwork-info__fact dt {
+  margin: 0;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.artwork-info--lightbox .artwork-info__fact dd {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.artwork-info--lightbox .artwork-info__desc {
+  margin: 0.75rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.58);
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+@media (min-width: 900px) {
+  .artwork-info--lightbox .artwork-info__desc {
+    max-height: min(12rem, 28vh);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  }
+}
+
+@media (max-width: 899px) {
+  .lightbox__footer .artwork-info--lightbox .artwork-info__desc {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+    max-height: none;
+  }
+
+  .lightbox__footer .artwork-info--lightbox .artwork-info__facts {
+    margin-top: 0.45rem;
+    gap: 0.3rem;
+  }
+
+  .lightbox__footer .artwork-info--lightbox .artwork-info__fact {
+    grid-template-columns: 4.75rem 1fr;
+    gap: 0.5rem;
+  }
+}

@@ -1,4 +1,5 @@
 import { site } from '../../data/content';
+import { formatArtworkPrice } from '../../config/artworkCatalog';
 import { stickerZones } from '../../data/stickers';
 import { useReveal } from '../../hooks/useReveal';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
@@ -43,6 +44,30 @@ export function Contact() {
         <div className="contact__order sticker-zone">
           <StickerField items={stickerZones.contactOrder} />
           <h3 className="contact__order-title">{site.processTitle}</h3>
+          <div className="contact__pricing">
+            <p className="contact__pricing-title">{site.orderPricing.title}</p>
+            <ul className="contact__pricing-list">
+              {site.orderPricing.tiers.map((tier) => (
+                <li key={tier.label} className="contact__pricing-item">
+                  <span className="contact__pricing-label">{tier.label}</span>
+                  <span className="contact__pricing-value">
+                    от {formatArtworkPrice(tier.fromRub)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="contact__pricing-note">
+              {site.orderPricing.note}{' '}
+              <a
+                href={site.orderPricing.telegramHref}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {site.orderPricing.noteLink}
+              </a>
+              .
+            </p>
+          </div>
           <div className="contact__order-steps">
             {site.processSteps.map((step) => (
               <article key={step.number} className="contact__order-step">

@@ -15,7 +15,6 @@ export interface Artwork {
   img: string;
   /** Extra shots: details, texture, process. First entry can repeat cover `img`. */
   views?: ArtworkView[];
-  available: boolean;
 }
 
 export interface CategoryFilter {
@@ -35,6 +34,19 @@ export interface ProcessStep {
   text: string;
 }
 
+export interface OrderPriceTier {
+  label: string;
+  fromRub: number;
+}
+
+export interface OrderPricing {
+  title: string;
+  tiers: OrderPriceTier[];
+  note: string;
+  noteLink: string;
+  telegramHref: string;
+}
+
 export interface SiteContent {
   galleryName: string;
   artistName: string;
@@ -45,6 +57,7 @@ export interface SiteContent {
   bio: string[];
   processTitle: string;
   processSteps: ProcessStep[];
+  orderPricing: OrderPricing;
   contacts: Contact[];
 }
 

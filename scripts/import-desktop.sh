@@ -43,6 +43,8 @@ import_file "$DESKTOP/2026-03-30 20-53-50.HEIC" "gallery/06-aysberg-finished-110
 import_file "$DESKTOP/2026-04-13 20-46-39.HEIC" "gallery/06-aysberg-angle-1103.jpg"
 import_file "$DESKTOP/2025-11-02 15-23-18.JPG" "gallery/32-self-detail-1104.jpg"
 import_file "$DESKTOP/2022-01-16 17-21-06_1642357724448.JPG" "gallery/10-depressivnaya-detail-1123.jpg"
+import_file "$DESKTOP/2022-01-11 23-54-04.JPG" "gallery/06-2026-03-09-04.jpg"
+import_file "$DESKTOP/2022-01-11 23-53-39.JPG" "gallery/06-2026-03-09-05.jpg"
 
 # New works
 import_file "$DESKTOP/2025-08-22 15-49-07.JPG" "gallery/37-babochka-1105.jpg"

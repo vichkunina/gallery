@@ -167,8 +167,7 @@ ${art.views
     size: '—',
     desc: '',
     img: mediaUrl('images/${esc(art.img)}'),
-${viewsBlock}    available: true,
-  },`;
+${viewsBlock}  },`;
   });
 
   const content = `import type { Artwork, CategoryFilter } from '../types';

@@ -32,6 +32,17 @@ export const site: SiteContent = {
       text: 'Доставка по России и миру.',
     },
   ],
+  orderPricing: {
+    title: 'Ориентиры по заказу',
+    tiers: [
+      { label: 'Магниты, 10×10 см', fromRub: 2_000 },
+      { label: 'Холст, 30×40 см', fromRub: 8_000 },
+      { label: 'Холст, 50×40 см', fromRub: 12_000 },
+    ],
+    note: 'Точная цена — после идеи, размера и срока.',
+    noteLink: 'Напишите в Telegram',
+    telegramHref: 'https://t.me/vichkunina',
+  },
   contacts: [
     { label: 'Канал', value: '@vichkunina_d', href: 'https://t.me/vichkunina_d' },
     { label: 'Личка', value: '@vichkunina', href: 'https://t.me/vichkunina' },

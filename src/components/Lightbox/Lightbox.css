@@ -20,16 +20,9 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  padding: 0.75rem clamp(0.75rem, 2vw, 1.25rem);
+  padding: 0.55rem clamp(0.75rem, 2vw, 1.25rem);
   background: rgba(6, 8, 18, 0.98);
   z-index: 2;
-}
-
-.lightbox__topbar-start {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  min-width: 0;
 }
 
 .lightbox__counter {
@@ -43,17 +36,6 @@
   color: rgba(255, 255, 255, 0.28);
   text-transform: none;
   letter-spacing: 0.04em;
-}
-
-.lightbox__title {
-  font-family: var(--font-display);
-  font-size: clamp(1rem, 2.2vw, 1.35rem);
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .lightbox__close {
@@ -224,13 +206,18 @@
   color: var(--color-text);
 }
 
+/* —— desktop: панель справа —— */
+.lightbox__aside {
+  display: none;
+}
+
 .lightbox__footer {
   grid-column: 1 / -1;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.65rem clamp(0.75rem, 2vw, 1.25rem) 0.85rem;
+  padding: 0.5rem clamp(0.75rem, 2vw, 1.25rem) 0.7rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(6, 8, 18, 0.98);
 }
@@ -248,29 +235,11 @@
   margin: 0 0 0.2rem;
 }
 
-.lightbox__desc {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.55);
-  line-height: 1.45;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.lightbox__meta {
-  font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.38);
-  letter-spacing: 0.03em;
-  margin: 0.25rem 0 0;
-}
-
 .lightbox__buy {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  padding: 0.6rem 1.1rem;
+  padding: 0.5rem 0.95rem;
   background: var(--color-on-accent);
   color: var(--color-text);
   font-size: 0.58rem;
@@ -296,6 +265,47 @@
   white-space: nowrap;
 }
 
+@media (min-width: 900px) {
+  .lightbox {
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) min(15rem, 18vw) auto;
+  }
+
+  .lightbox__viewer {
+    grid-column: 2;
+    padding: 0.5rem 0.35rem;
+  }
+
+  .lightbox__filmstrip {
+    max-width: 100%;
+  }
+
+  .lightbox__aside {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    grid-column: 3;
+    grid-row: 2;
+    min-width: 0;
+    min-height: 0;
+    padding: 1rem 1.1rem 1rem 0.85rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    overflow-y: auto;
+  }
+
+  .lightbox__aside-action {
+    margin-top: 1rem;
+  }
+
+  .lightbox__nav-zone--next {
+    grid-column: 4;
+  }
+
+  .lightbox__footer {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
   .lightbox__nav-zone {
     min-width: clamp(2.75rem, 16vw, 4rem);
@@ -315,15 +325,11 @@
   }
 
   .lightbox__topbar {
-    padding-top: max(0.75rem, env(safe-area-inset-top));
+    padding-top: max(0.55rem, env(safe-area-inset-top));
   }
 
   .lightbox__buy,
   .lightbox__sold-note {
     align-self: flex-start;
-  }
-
-  .lightbox__title {
-    white-space: normal;
   }
 }

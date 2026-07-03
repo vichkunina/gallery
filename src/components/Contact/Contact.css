@@ -143,8 +143,72 @@
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--color-text);
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   text-align: center;
+}
+
+.contact__pricing {
+  margin-bottom: 2rem;
+  padding: 1.25rem 1.5rem;
+  border: var(--border-subtle);
+  background: var(--color-bg);
+  text-align: center;
+}
+
+.contact__pricing-title {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+}
+
+.contact__pricing-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+  max-width: 20rem;
+  margin-inline: auto;
+}
+
+.contact__pricing-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  font-size: 0.88rem;
+}
+
+.contact__pricing-label {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.contact__pricing-value {
+  color: var(--color-text-soft);
+  white-space: nowrap;
+}
+
+.contact__pricing-note {
+  margin: 1.1rem 0 0;
+  max-width: 26rem;
+  margin-inline: auto;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+.contact__pricing-note a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.contact__pricing-note a:hover {
+  color: var(--color-text);
 }
 
 .contact__order-steps {

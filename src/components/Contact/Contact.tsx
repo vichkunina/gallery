@@ -2,6 +2,7 @@ import { site } from '../../data/content';
 import { formatArtworkPrice } from '../../config/artworkCatalog';
 import { stickerZones } from '../../data/stickers';
 import { useReveal } from '../../hooks/useReveal';
+import { trackOutboundLink } from '../../utils/analytics';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
 import { StickerField } from '../Stickers/StickerField';
 import './Contact.css';
@@ -34,6 +35,7 @@ export function Contact() {
               className="contact__link"
               target={item.href.startsWith('http') ? '_blank' : undefined}
               rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+              onClick={() => trackOutboundLink(item.href, item.label)}
             >
               <strong className="contact__label">{item.label}</strong>
               <span className="contact__value">{item.value}</span>
@@ -62,6 +64,7 @@ export function Contact() {
                 href={site.orderPricing.telegramHref}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackOutboundLink(site.orderPricing.telegramHref, 'order_telegram')}
               >
                 {site.orderPricing.noteLink}
               </a>

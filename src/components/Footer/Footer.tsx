@@ -17,6 +17,10 @@ export function Footer() {
         >
           Наверх ↑
         </button>
+        <nav className="footer__links" aria-label="Полезные ссылки">
+          <a href="/buy/">Купить картину</a>
+          <a href="/order/">Заказать картину</a>
+        </nav>
         <span className="footer__note">Сделано с любовью к искусству</span>
       </div>
     </footer>

@@ -9,6 +9,7 @@ import { artworkViewAlt, getArtworkViews, hasMultipleViews } from '../../utils/a
 import { getArtworkDisplayName } from '../../utils/artworkDisplay';
 import { mediaThumbUrl } from '../../config/media';
 import { getArtworkSaleStatus } from '../../config/artworkSaleStatus';
+import { trackGoal } from '../../utils/analytics';
 import { ArtworkInfo } from '../ArtworkInfo/ArtworkInfo';
 import './Lightbox.css';
 
@@ -18,6 +19,7 @@ export function Lightbox() {
     selectedIndex,
     total,
     close,
+    closeAndGoToSection,
     next,
     prev,
     hasNext,
@@ -84,6 +86,12 @@ export function Lightbox() {
   }, [isOpen]);
 
   if (!selected || !currentView) return null;
+
+  const handleBuyClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    trackGoal('buy_intent', { work_id: selected.id });
+    closeAndGoToSection('contact');
+  };
 
   return createPortal(
     <div
@@ -165,7 +173,7 @@ export function Lightbox() {
         <ArtworkInfo art={selected} variant="lightbox" description />
         <div className="lightbox__aside-action">
           {getArtworkSaleStatus(selected.id) === 'for_sale' ? (
-            <a href="#contact" className="lightbox__buy" onClick={close}>
+            <a href="/#contact" className="lightbox__buy" onClick={handleBuyClick}>
               Написать о покупке →
             </a>
           ) : getArtworkSaleStatus(selected.id) === 'sold' ? (
@@ -196,7 +204,7 @@ export function Lightbox() {
           <ArtworkInfo art={selected} variant="lightbox" description />
         </div>
         {getArtworkSaleStatus(selected.id) === 'for_sale' ? (
-          <a href="#contact" className="lightbox__buy" onClick={close}>
+          <a href="/#contact" className="lightbox__buy" onClick={handleBuyClick}>
             Написать о покупке →
           </a>
         ) : getArtworkSaleStatus(selected.id) === 'sold' ? (

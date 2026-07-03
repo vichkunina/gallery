@@ -13,7 +13,7 @@ const DIST = path.join(ROOT, 'dist');
 const SITE_URL = 'https://vichkunina.art';
 const SITE_TITLE = 'Дарья Вичкунина — художник | галерея картин, заказ картин';
 const SITE_DESC =
-  'Галерея оригинальных картин художника Дарьи Вичкуниной: масло, акварель, смешанная техника. Купить готовую работу или заказать картину на заказ.';
+  'Художник в Санкт-Петербурге: оригинальные картины маслом, акварелью и смешанной техникой. Купить готовую работу или заказать картину на заказ.';
 
 function absUrl(relativePath) {
   const normalized = relativePath.replace(/^\//, '');
@@ -90,12 +90,13 @@ function buildWorkSharePath(workId, viewIndex = 0, multiView = false) {
   return `/work/${workId}/`;
 }
 
-function buildWorkHash(workId, viewIndex = 0, multiView = false) {
-  if (multiView || viewIndex > 0) return `#work/${workId}/${viewIndex + 1}`;
-  return `#work/${workId}`;
+function extractSpaAssets(indexHtml) {
+  const script = indexHtml.match(/<script type="module" src="([^"]+)"><\/script>/)?.[1] ?? '';
+  const css = indexHtml.match(/<link rel="stylesheet" href="([^"]+)">/)?.[1] ?? '';
+  return { script, css };
 }
 
-function buildWorkSharePage(art, catalog, viewIndex = 0) {
+function buildWorkSharePage(art, catalog, viewIndex = 0, spaAssets = { script: '', css: '' }) {
   const multiView = art.viewCount > 1;
   const name = getDisplayName(art, catalog);
   const title = `${name} — Дарья Вичкунина`;
@@ -104,7 +105,12 @@ function buildWorkSharePage(art, catalog, viewIndex = 0) {
   const shareUrl = `${SITE_URL}${sharePath}`;
   const imagePath = art.viewImages?.[viewIndex] ?? art.imagePath;
   const imageUrl = absUrl(imagePath);
-  const openHash = buildWorkHash(art.id, viewIndex, multiView);
+  const assetTags = [
+    spaAssets.css ? `    <link rel="stylesheet" href="${spaAssets.css}">` : '',
+    spaAssets.script ? `    <script type="module" src="${spaAssets.script}"></script>` : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
 
   return `<!DOCTYPE html>
 <html lang="ru">
@@ -114,6 +120,7 @@ function buildWorkSharePage(art, catalog, viewIndex = 0) {
     <title>${escapeXml(title)}</title>
     <meta name="description" content="${escapeXml(description)}" />
     <link rel="canonical" href="${shareUrl}" />
+    <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="Дарья Вичкунина" />
     <meta property="og:title" content="${escapeXml(title)}" />
@@ -128,17 +135,19 @@ function buildWorkSharePage(art, catalog, viewIndex = 0) {
     <meta name="twitter:description" content="${escapeXml(description)}" />
     <meta name="twitter:image" content="${imageUrl}" />
     <meta name="twitter:image:alt" content="${escapeXml(`${name} — картина, Дарья Вичкунина`)}" />
-    <meta http-equiv="refresh" content="0;url=/${openHash}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+${assetTags}
   </head>
   <body>
-    <p><a href="/${openHash}">Открыть «${escapeXml(name)}» в галерее</a></p>
-    <script>location.replace('/${openHash}')</script>
+    <div id="root"></div>
   </body>
 </html>
 `;
 }
 
-function writeWorkSharePages(artworks, catalog) {
+function writeWorkSharePages(artworks, catalog, spaAssets) {
   let count = 0;
   for (const art of artworks) {
     const multiView = art.viewCount > 1;
@@ -148,7 +157,7 @@ function writeWorkSharePages(artworks, catalog) {
         fs.mkdirSync(viewDir, { recursive: true });
         fs.writeFileSync(
           path.join(viewDir, 'index.html'),
-          buildWorkSharePage(art, catalog, viewIndex),
+          buildWorkSharePage(art, catalog, viewIndex, spaAssets),
           'utf8',
         );
         count += 1;
@@ -160,7 +169,7 @@ function writeWorkSharePages(artworks, catalog) {
     fs.mkdirSync(baseDir, { recursive: true });
     fs.writeFileSync(
       path.join(baseDir, 'index.html'),
-      buildWorkSharePage(art, catalog, 0),
+      buildWorkSharePage(art, catalog, 0, spaAssets),
       'utf8',
     );
     count += 1;
@@ -184,6 +193,355 @@ function parseArtworks(tsContent) {
   return items;
 }
 
+function parseSaleStatus(tsContent) {
+  const map = {};
+  const re = /(\d+):\s*'(for_sale|sold|not_for_sale)'/g;
+  let match;
+  while ((match = re.exec(tsContent)) !== null) {
+    map[Number(match[1])] = match[2];
+  }
+  return map;
+}
+
+function getSaleStatus(id, statusMap) {
+  return statusMap[id] ?? 'for_sale';
+}
+
+function getForSaleArtworks(artworks, statusMap) {
+  return artworks.filter((art) => getSaleStatus(art.id, statusMap) === 'for_sale');
+}
+
+const ORDER_FAQS = [
+  {
+    question: 'Сколько стоит заказ картины?',
+    answer:
+      'Ориентиры: магниты 10×10 см — от 2 000 ₽, холст 30×40 см — от 8 000 ₽, холст 50×40 см — от 12 000 ₽. Точная стоимость — после обсуждения идеи, размера и сроков.',
+  },
+  {
+    question: 'Как заказать картину?',
+    answer:
+      'Напишите в Telegram (@vichkunina): опишите идею или пришлите референсы. Обсудим размер, технику (масло, акварель, гуашь), сроки и доставку.',
+  },
+  {
+    question: 'В каких техниках можно заказать?',
+    answer:
+      'В основном масло на холсте, также акварель, гуашь и смешанная техника. Можно заказать портрет, пейзаж, натюрморт или работу по вашей идее.',
+  },
+  {
+    question: 'Есть ли доставка?',
+    answer: 'Да, отправляю картины по России и миру. Способ и стоимость доставки согласуем при заказе.',
+  },
+  {
+    question: 'Можно купить готовую картину из галереи?',
+    answer:
+      'Да, на сайте есть работы в продаже — смотрите раздел «Купить картину» или фильтр «Можно купить» в галерее.',
+  },
+  {
+    question: 'Где находится художник?',
+    answer:
+      'Дарья Вичкунина живёт и работает в Санкт-Петербурге. Заказ и покупка — онлайн, через Telegram.',
+  },
+];
+
+function seoPageStyles() {
+  return `
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #1a1a1a;
+      background: #fafafa;
+    }
+    a { color: #1a1a1a; }
+    .seo { max-width: 48rem; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+    .seo__nav { font-size: 0.85rem; margin-bottom: 2rem; }
+    .seo__nav a { margin-right: 1rem; }
+    h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); line-height: 1.15; margin: 0 0 1rem; }
+    h2 { font-size: 1.15rem; margin: 2rem 0 0.75rem; }
+    p { margin: 0 0 1rem; color: #444; }
+    .seo__cta {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.65rem 1.2rem;
+      border-radius: 999px;
+      background: #1a1a1a;
+      color: #fff !important;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .seo__list { list-style: none; padding: 0; margin: 1.5rem 0 0; }
+    .seo__item {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 1rem;
+      align-items: start;
+      padding: 1rem 0;
+      border-top: 1px solid #e8e8e8;
+    }
+    .seo__item img {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #eee;
+    }
+    .seo__item h3 { margin: 0 0 0.25rem; font-size: 1rem; }
+    .seo__item p { margin: 0; font-size: 0.88rem; }
+    .seo__price { font-weight: 600; color: #1a1a1a; }
+    .seo__faq dt { font-weight: 600; margin-top: 1.25rem; }
+    .seo__faq dd { margin: 0.35rem 0 0; color: #444; }
+    .seo__steps {
+      margin: 0 0 1rem;
+      padding-left: 1.25rem;
+      color: #444;
+    }
+    .seo__steps li { margin-bottom: 0.5rem; padding-left: 0.25rem; }
+    .seo__steps li:last-child { margin-bottom: 0; }
+  `;
+}
+
+function buildFaqNode(faqs, id = `${SITE_URL}/order/#faq`) {
+  return {
+    '@type': 'FAQPage',
+    '@id': id,
+    mainEntity: faqs.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  };
+}
+
+function buildFaqJsonLd(faqs) {
+  return {
+    '@context': 'https://schema.org',
+    ...buildFaqNode(faqs),
+  };
+}
+
+function buildLandingPage({ title, description, canonicalPath, jsonLdGraph, bodyHtml }) {
+  const canonical = `${SITE_URL}${canonicalPath}`;
+  const jsonLdBlocks = Array.isArray(jsonLdGraph) ? jsonLdGraph : [jsonLdGraph];
+  const jsonLdScripts = jsonLdBlocks
+    .map((block) => `<script type="application/ld+json">${JSON.stringify(block)}</script>`)
+    .join('\n    ');
+
+  return `<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${escapeXml(title)}</title>
+    <meta name="description" content="${escapeXml(description)}" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="${canonical}" />
+    <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Дарья Вичкунина" />
+    <meta property="og:title" content="${escapeXml(title)}" />
+    <meta property="og:description" content="${escapeXml(description)}" />
+    <meta property="og:url" content="${canonical}" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:image" content="${SITE_URL}/og.jpg?v=3" />
+    <style>${seoPageStyles()}</style>
+    ${jsonLdScripts}
+  </head>
+  <body>
+    <main class="seo">
+      <nav class="seo__nav" aria-label="Навигация">
+        <a href="${SITE_URL}/">Главная</a>
+        <a href="${SITE_URL}/#gallery">Галерея</a>
+        <a href="${SITE_URL}/buy/">Купить</a>
+        <a href="${SITE_URL}/order/">Заказать</a>
+        <a href="${SITE_URL}/#contact">Контакты</a>
+      </nav>
+      ${bodyHtml}
+    </main>
+  </body>
+</html>
+`;
+}
+
+function buildOrderPageBody() {
+  const faqHtml = ORDER_FAQS.map(
+    (item) => `<dt>${escapeXml(item.question)}</dt><dd>${escapeXml(item.answer)}</dd>`,
+  ).join('\n        ');
+
+  return `
+      <h1>Заказ картины на заказ — художник в Санкт-Петербурге</h1>
+      <p>
+        Дарья Вичкунина — художник из Санкт-Петербурга. Пишу картины маслом, акварелью и гуашью:
+        портреты, пейзажи, натюрморты и работы по вашей идее. Обсудим размер, технику, сроки и стоимость
+        до начала — без сюрпризов.
+      </p>
+      <p>
+        <a class="seo__cta" href="https://t.me/vichkunina">Написать в Telegram</a>
+      </p>
+
+      <h2>Ориентиры по стоимости</h2>
+      <p>Магниты 10×10 см — от 2 000 ₽ · Холст 30×40 см — от 8 000 ₽ · Холст 50×40 см — от 12 000 ₽</p>
+
+      <h2>Как проходит заказ</h2>
+      <ol class="seo__steps">
+        <li>Вы описываете идею или выбираете референс</li>
+        <li>Согласуем размер, технику и цену</li>
+        <li>Получаете готовую картину с доставкой</li>
+      </ol>
+
+      <h2>Частые вопросы</h2>
+      <dl class="seo__faq">
+        ${faqHtml}
+      </dl>
+
+      <p>
+        <a class="seo__cta" href="${SITE_URL}/buy/">Смотреть картины в продаже</a>
+      </p>
+  `;
+}
+
+function buildBuyPageBody(forSale, catalog) {
+  const itemsHtml = forSale
+    .map((art) => {
+      const name = getDisplayName(art, catalog);
+      const meta = getMetaLine(art, catalog);
+      const price = catalog[art.id]?.price;
+      const priceLabel = price != null ? formatPrice(price) : 'Цена по запросу';
+      const workUrl = `${SITE_URL}${buildWorkSharePath(art.id, 0, art.viewCount > 1)}`;
+      const imageUrl = absUrl(art.imagePath);
+      return `        <li class="seo__item">
+          <a href="${workUrl}"><img src="${imageUrl}" alt="${escapeXml(name)} — купить картину" width="72" height="72" loading="lazy" /></a>
+          <div>
+            <h3><a href="${workUrl}">${escapeXml(name)}</a></h3>
+            <p>${escapeXml(meta)}${meta ? ' · ' : ''}<span class="seo__price">${escapeXml(priceLabel)}</span></p>
+          </div>
+        </li>`;
+    })
+    .join('\n');
+
+  return `
+      <h1>Купить картину — оригиналы маслом и акварелью</h1>
+      <p>
+        Готовые работы художника Дарьи Вичкуниной из Санкт-Петербурга. Ниже — картины, которые сейчас
+        можно купить. Нажмите на работу, чтобы посмотреть детали и написать о покупке.
+      </p>
+      <p>
+        <a class="seo__cta" href="https://t.me/vichkunina">Написать о покупке</a>
+      </p>
+
+      <h2>Картины в продаже (${forSale.length})</h2>
+      <ul class="seo__list">
+${itemsHtml}
+      </ul>
+
+      <p>
+        Не нашли подходящую? <a href="${SITE_URL}/order/">Закажите картину</a> по своей идее.
+      </p>
+  `;
+}
+
+function writeLandingPages(artworksWithIds, catalog, statusMap) {
+  const forSale = getForSaleArtworks(artworksWithIds, statusMap);
+  const personId = `${SITE_URL}/#person`;
+
+  const orderDir = path.join(DIST, 'order');
+  fs.mkdirSync(orderDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(orderDir, 'index.html'),
+    buildLandingPage({
+      title: 'Заказ картины на заказ — художник Санкт-Петербург | Дарья Вичкунина',
+      description:
+        'Заказать картину у художника Дарьи Вичкуниной: масло, акварель, гуашь. Санкт-Петербург, доставка по России. Цены от 2 000 ₽.',
+      canonicalPath: '/order/',
+      jsonLdGraph: [
+        buildFaqJsonLd(ORDER_FAQS),
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Service',
+          name: 'Заказ картины на заказ',
+          description:
+            'Индивидуальный заказ картины: портрет, пейзаж, натюрморт. Масло, акварель, доставка по России.',
+          provider: { '@id': personId },
+          areaServed: [
+            { '@type': 'City', name: 'Санкт-Петербург' },
+            { '@type': 'Country', name: 'Россия' },
+          ],
+          url: `${SITE_URL}/order/`,
+        },
+      ],
+      bodyHtml: buildOrderPageBody(),
+    }),
+    'utf8',
+  );
+
+  const buyDir = path.join(DIST, 'buy');
+  fs.mkdirSync(buyDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(buyDir, 'index.html'),
+    buildLandingPage({
+      title: 'Купить картину — оригиналы художника | Дарья Вичкунина',
+      description:
+        'Купить оригинальную картину маслом и акварелью. Готовые работы в продаже, цены, доставка по России. Художник Санкт-Петербург.',
+      canonicalPath: '/buy/',
+      jsonLdGraph: {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: 'Картины в продаже',
+        description: 'Оригинальные картины художника Дарьи Вичкуниной, доступные для покупки.',
+        url: `${SITE_URL}/buy/`,
+        mainEntity: {
+          '@type': 'ItemList',
+          itemListElement: forSale.map((art, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: `${SITE_URL}${buildWorkSharePath(art.id, 0, art.viewCount > 1)}`,
+            name: getDisplayName(art, catalog),
+          })),
+        },
+      },
+      bodyHtml: buildBuyPageBody(forSale, catalog),
+    }),
+    'utf8',
+  );
+
+  return 2;
+}
+
+function buildVisualArtworkNode(art, catalog, statusMap) {
+  const personId = `${SITE_URL}/#person`;
+  const name = getDisplayName(art, catalog);
+  const status = getSaleStatus(art.id, statusMap);
+  const workUrl = `${SITE_URL}${buildWorkSharePath(art.id, 0, art.viewCount > 1)}`;
+  const node = {
+    '@type': 'VisualArtwork',
+    name,
+    description: getWorkDescription(art, catalog),
+    artMedium: catalog[art.id]?.materials ?? (art.details !== '—' ? art.details : undefined),
+    image: absUrl(art.imagePath),
+    creator: { '@id': personId },
+    url: workUrl,
+  };
+
+  const price = catalog[art.id]?.price;
+  if (status === 'for_sale') {
+    node.offers = {
+      '@type': 'Offer',
+      price: price != null ? String(price) : undefined,
+      priceCurrency: 'RUB',
+      availability: 'https://schema.org/InStock',
+      url: workUrl,
+    };
+  }
+
+  return node;
+}
+
 function parseSimpleItems(tsContent) {
   const items = [];
   const re =
@@ -200,7 +558,7 @@ function parseSimpleItems(tsContent) {
   return items;
 }
 
-function buildJsonLd(artworks, koshmariki) {
+function buildJsonLd(artworksWithIds, koshmariki, catalog, statusMap) {
   const personId = `${SITE_URL}/#person`;
   const graph = [
     {
@@ -221,6 +579,14 @@ function buildJsonLd(artworks, koshmariki) {
       jobTitle: 'Художник',
       url: SITE_URL,
       description: SITE_DESC,
+      homeLocation: {
+        '@type': 'Place',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Санкт-Петербург',
+          addressCountry: 'RU',
+        },
+      },
       sameAs: ['https://t.me/vichkunina_d', 'https://t.me/vichkunina'],
     },
     {
@@ -232,15 +598,7 @@ function buildJsonLd(artworks, koshmariki) {
       author: { '@id': personId },
       description:
         'Оригинальные картины маслом, акварелью и смешанной техникой. Можно купить готовую работу или заказать картину.',
-      hasPart: artworks.map((art) => ({
-        '@type': 'VisualArtwork',
-        name: art.title,
-        description: art.desc,
-        artMedium: art.details,
-        image: absUrl(art.imagePath),
-        creator: { '@id': personId },
-        url: `${SITE_URL}/#gallery`,
-      })),
+      hasPart: artworksWithIds.map((art) => buildVisualArtworkNode(art, catalog, statusMap)),
     },
     {
       '@type': 'Service',
@@ -249,9 +607,13 @@ function buildJsonLd(artworks, koshmariki) {
       description:
         'Индивидуальный заказ картины: обсуждение идеи, размер, техника, сроки и доставка по России и миру.',
       provider: { '@id': personId },
-      areaServed: 'RU',
-      url: `${SITE_URL}/#contact`,
+      areaServed: [
+        { '@type': 'City', name: 'Санкт-Петербург' },
+        { '@type': 'Country', name: 'Россия' },
+      ],
+      url: `${SITE_URL}/order/`,
     },
+    buildFaqNode(ORDER_FAQS),
   ];
 
   if (koshmariki.length) {
@@ -312,6 +674,18 @@ function buildSitemap(artworks, koshmariki, catalog) {
     <priority>1.0</priority>
 ${imageTags}
   </url>
+  <url>
+    <loc>${SITE_URL}/order/</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${SITE_URL}/buy/</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
 ${workUrls}
 </urlset>
 `;
@@ -339,7 +713,7 @@ function buildNoscript(artworks) {
       <ul>
       ${list}
       </ul>
-      <p><a href="${SITE_URL}/#contact">Заказать картину</a> · <a href="https://t.me/vichkunina">@vichkunina</a></p>
+      <p><a href="${SITE_URL}/buy/">Купить картину</a> · <a href="${SITE_URL}/order/">Заказать картину</a> · <a href="${SITE_URL}/#contact">Контакты</a> · <a href="https://t.me/vichkunina">@vichkunina</a></p>
     </article>
   </noscript>`;
 }
@@ -347,24 +721,30 @@ function buildNoscript(artworks) {
 function main() {
   const artworksTs = fs.readFileSync(path.join(ROOT, 'src/data/artworks.ts'), 'utf8');
   const catalogTs = fs.readFileSync(path.join(ROOT, 'src/config/artworkCatalog.ts'), 'utf8');
+  const saleStatusTs = fs.readFileSync(path.join(ROOT, 'src/config/artworkSaleStatus.ts'), 'utf8');
   const koshmarikiTs = fs.readFileSync(path.join(ROOT, 'src/data/koshmariki.ts'), 'utf8');
   const catalog = parseArtworkCatalog(catalogTs);
+  const statusMap = parseSaleStatus(saleStatusTs);
   const artworksWithIds = parseArtworksWithIds(artworksTs);
   const artworks = parseArtworks(artworksTs);
   const koshmariki = parseSimpleItems(koshmarikiTs);
   const allImages = [...artworks, ...koshmariki];
 
-  const jsonLd = buildJsonLd(artworks, koshmariki);
+  const jsonLd = buildJsonLd(artworksWithIds, koshmariki, catalog, statusMap);
   const jsonLdScript = `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>`;
-
-  fs.writeFileSync(path.join(DIST, 'sitemap.xml'), buildSitemap(artworks, koshmariki, catalog), 'utf8');
-
-  const sharePages = writeWorkSharePages(artworksWithIds, catalog);
 
   const indexPath = path.join(DIST, 'index.html');
   let html = fs.readFileSync(indexPath, 'utf8');
+  const spaAssets = extractSpaAssets(html);
 
-  if (!html.includes('application/ld+json')) {
+  fs.writeFileSync(path.join(DIST, 'sitemap.xml'), buildSitemap(artworksWithIds, koshmariki, catalog), 'utf8');
+
+  const sharePages = writeWorkSharePages(artworksWithIds, catalog, spaAssets);
+  const landingPages = writeLandingPages(artworksWithIds, catalog, statusMap);
+
+  if (html.includes('application/ld+json')) {
+    html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, jsonLdScript);
+  } else {
     html = html.replace('</head>', `  ${jsonLdScript}\n  </head>`);
   }
 
@@ -374,8 +754,9 @@ function main() {
 
   fs.writeFileSync(indexPath, html, 'utf8');
 
+  const forSaleCount = getForSaleArtworks(artworksWithIds, statusMap).length;
   console.log(
-    `SEO: sitemap.xml (${allImages.length} images, ${artworksWithIds.length} work URLs), ${sharePages} share pages, JSON-LD, noscript → dist/`,
+    `SEO: sitemap.xml (${allImages.length} images, ${artworksWithIds.length} work URLs, 2 landing pages), ${sharePages} share pages, ${landingPages} landings (${forSaleCount} for sale), JSON-LD, noscript → dist/`,
   );
 }
 

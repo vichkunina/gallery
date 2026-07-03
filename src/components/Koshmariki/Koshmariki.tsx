@@ -8,6 +8,7 @@ import { useSwipeNavigation } from '../../hooks/useSwipeNavigation';
 import { useReveal } from '../../hooks/useReveal';
 import { mediaThumbUrl } from '../../config/media';
 import type { KoshmarikiItem } from '../../types';
+import { trackGoal } from '../../utils/analytics';
 import { ArtImage } from '../ArtImage/ArtImage';
 import { StickerField } from '../Stickers/StickerField';
 import './Koshmariki.css';
@@ -60,7 +61,10 @@ export function Koshmariki() {
               type="button"
               className="koshmariki__card"
               style={{ transitionDelay: `${0.04 + index * 0.03}s` }}
-              onClick={() => setSelected(item)}
+              onClick={() => {
+                setSelected(item);
+                trackGoal('koshmariki_open', { item_id: item.id, name: item.title });
+              }}
               aria-label={item.title}
             >
               <div className="koshmariki__card-media">

@@ -15,11 +15,33 @@
 }
 
 .footer__copy,
-.footer__note {
+.footer__note,
+.footer__links {
   font-size: 0.6rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-muted);
+}
+
+.footer__links {
+  display: flex;
+  gap: 1rem;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.footer__links a {
+  color: var(--color-text-soft);
+  transition: color 0.25s;
+}
+
+.footer__links a:hover {
+  color: var(--color-text);
+}
+
+.footer__note {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .footer__top {

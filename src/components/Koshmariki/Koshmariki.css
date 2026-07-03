@@ -153,7 +153,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 2;
+  z-index: 3;
+  pointer-events: none;
 }
 
 .koshmariki__lightbox-counter,
@@ -163,10 +164,22 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.55);
+  pointer-events: auto;
 }
 
 .koshmariki__lightbox-close {
+  margin: 0;
+  padding: 0.5rem 0;
+  border: none;
+  background: none;
   color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: opacity 0.25s;
+}
+
+.koshmariki__lightbox-close:hover,
+.koshmariki__lightbox-close:focus-visible {
+  opacity: 0.75;
 }
 
 .koshmariki__lightbox-stage {
@@ -199,7 +212,7 @@
 
 .koshmariki__lightbox-nav-zone {
   position: absolute;
-  top: 0;
+  top: 3.5rem;
   bottom: 0;
   width: clamp(3.25rem, 14vw, 5.5rem);
   display: flex;
@@ -215,7 +228,8 @@
 }
 
 .koshmariki__lightbox-nav-zone:disabled {
-  cursor: not-allowed;
+  cursor: default;
+  pointer-events: none;
 }
 
 .koshmariki__lightbox-nav-zone:not(:disabled):hover,

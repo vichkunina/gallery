@@ -4,6 +4,7 @@ import { stickerZones } from '../../data/stickers';
 import { ArtImage } from '../ArtImage/ArtImage';
 import { StickerField } from '../Stickers/StickerField';
 import { prefersReducedMotion } from '../../utils/motion';
+import { trackGoal, trackOutboundLink } from '../../utils/analytics';
 import './Hero.css';
 
 export function Hero() {
@@ -27,10 +28,10 @@ export function Hero() {
           <p className="hero__quote">{site.heroQuote}</p>
 
           <div className="hero__actions">
-            <a className="hero__cta" href="#gallery">
+            <a className="hero__cta" href="#gallery" onClick={() => trackGoal('cta_click', { place: 'hero', target: 'gallery' })}>
               Смотреть работы
             </a>
-            <a className="hero__cta hero__cta--ghost" href="#contact">
+            <a className="hero__cta hero__cta--ghost" href="#contact" onClick={() => trackGoal('cta_click', { place: 'hero', target: 'contact' })}>
               Написать
             </a>
           </div>
@@ -38,7 +39,7 @@ export function Hero() {
           <ul className="hero__social">
             {site.contacts.map((contact) => (
               <li key={contact.href}>
-                <a href={contact.href} target="_blank" rel="noopener noreferrer">
+                <a href={contact.href} target="_blank" rel="noopener noreferrer" onClick={() => trackOutboundLink(contact.href, contact.label)}>
                   {contact.value}
                 </a>
               </li>

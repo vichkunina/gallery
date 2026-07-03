@@ -9,16 +9,21 @@ import {
   type ReactNode,
 } from 'react';
 import { artworks } from '../data/artworks';
-import type { Artwork } from '../types';
+import type { Artwork, SectionId } from '../types';
 import { getArtworkViews, hasMultipleViews } from '../utils/artworkViews';
 import {
   isLegacyWorkHash,
+  isWorkHash,
   parseWorkIdFromLocation,
   resolveWorkLocation,
   syncWorkUrl,
+  navigateToSection,
 } from '../utils/galleryUrl';
 import { buildArtworkIndexById } from '../utils/validateArtworkIds';
 import { useArtworkPageMeta } from '../hooks/useArtworkPageMeta';
+import { getArtworkOpenParams } from '../utils/artworkAnalytics';
+import { trackGoal } from '../utils/analytics';
+import { useLightboxTime } from '../hooks/useLightboxTime';
 
 interface GalleryContextValue {
   selected: Artwork | null;
@@ -27,6 +32,7 @@ interface GalleryContextValue {
   viewIndex: number;
   select: (art: Artwork) => void;
   close: () => void;
+  closeAndGoToSection: (sectionId: SectionId) => void;
   next: () => void;
   prev: () => void;
   setViewIndex: (index: number) => void;
@@ -75,6 +81,7 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
   const selected = selectedIndex === null ? null : (artworks[selectedIndex] ?? null);
 
   useArtworkPageMeta(selected, viewIndex);
+  const { flushLightboxTime, resetLightboxTime } = useLightboxTime(selected);
 
   const syncUrl = useCallback(
     (workIndex: number | null, view: number, mode: 'push' | 'replace') => {
@@ -91,6 +98,10 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       const clamped = clampViewIndex(selectedIndex, index);
       setViewIndexState(clamped);
       syncUrl(selectedIndex, clamped, 'replace');
+      trackGoal('artwork_view', {
+        work_id: artworks[selectedIndex]?.id,
+        view: clamped + 1,
+      });
     },
     [selectedIndex, syncUrl],
   );
@@ -104,12 +115,18 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       setSelectedIndex(index);
       setViewIndexState(0);
       syncUrl(index, 0, wasClosed ? 'push' : 'replace');
+      trackGoal('artwork_open', getArtworkOpenParams(art));
       if (wasClosed) openedViaPush.current = true;
     },
     [selectedIndex, syncUrl],
   );
 
   const close = useCallback(() => {
+    flushLightboxTime(selected?.id);
+    resetLightboxTime();
+    trackGoal('artwork_close', {
+      work_id: selected?.id,
+    });
     setSelectedIndex(null);
     setViewIndexState(0);
 
@@ -120,27 +137,43 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
     }
 
     syncUrl(null, 0, 'replace');
-  }, [syncUrl]);
+  }, [syncUrl, selected?.id, flushLightboxTime, resetLightboxTime]);
+
+  const closeAndGoToSection = useCallback(
+    (sectionId: SectionId) => {
+      flushLightboxTime(selected?.id);
+      resetLightboxTime();
+      setSelectedIndex(null);
+      setViewIndexState(0);
+      openedViaPush.current = false;
+      navigateToSection(sectionId);
+    },
+    [flushLightboxTime, resetLightboxTime, selected?.id],
+  );
 
   const next = useCallback(() => {
     setSelectedIndex((index) => {
       if (index === null || index >= artworks.length - 1) return index;
+      flushLightboxTime(artworks[index]?.id);
       const nextIndex = index + 1;
       setViewIndexState(0);
       syncUrl(nextIndex, 0, 'replace');
+      trackGoal('artwork_nav', { direction: 'next', work_id: artworks[nextIndex]?.id });
       return nextIndex;
     });
-  }, [syncUrl]);
+  }, [syncUrl, flushLightboxTime]);
 
   const prev = useCallback(() => {
     setSelectedIndex((index) => {
       if (index === null || index <= 0) return index;
+      flushLightboxTime(artworks[index]?.id);
       const prevIndex = index - 1;
       setViewIndexState(0);
       syncUrl(prevIndex, 0, 'replace');
+      trackGoal('artwork_nav', { direction: 'prev', work_id: artworks[prevIndex]?.id });
       return prevIndex;
     });
-  }, [syncUrl]);
+  }, [syncUrl, flushLightboxTime]);
 
   useEffect(() => {
     const applyLocation = () => {
@@ -152,13 +185,18 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       setViewIndexState(view);
       if (workIndex === null) openedViaPush.current = false;
 
-      if (resolved && workIndex !== null && isLegacyWorkHash(window.location)) {
+      if (
+        resolved &&
+        workIndex !== null &&
+        (isLegacyWorkHash(window.location) || isWorkHash(window.location))
+      ) {
         syncUrl(workIndex, view, 'replace');
       }
     };
 
     window.addEventListener('popstate', applyLocation);
     window.addEventListener('hashchange', applyLocation);
+    applyLocation();
     return () => {
       window.removeEventListener('popstate', applyLocation);
       window.removeEventListener('hashchange', applyLocation);
@@ -175,13 +213,14 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       viewIndex,
       select,
       close,
+      closeAndGoToSection,
       next,
       prev,
       setViewIndex,
       hasNext: resolvedIndex >= 0 && resolvedIndex < artworks.length - 1,
       hasPrev: resolvedIndex > 0,
     }),
-    [selected, resolvedIndex, viewIndex, select, close, next, prev, setViewIndex],
+    [selected, resolvedIndex, viewIndex, select, close, closeAndGoToSection, next, prev, setViewIndex],
   );
 
   return <GalleryContext.Provider value={value}>{children}</GalleryContext.Provider>;

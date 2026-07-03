@@ -6,7 +6,7 @@ const SITE = 'https://vichkunina.art';
 const KEY = 'vichkunina2026indexnowkey';
 const KEY_LOCATION = `${SITE}/${KEY}.txt`;
 
-const urlList = [`${SITE}/`];
+const urlList = [`${SITE}/`, `${SITE}/order/`, `${SITE}/buy/`];
 
 const response = await fetch('https://yandex.com/indexnow', {
   method: 'POST',

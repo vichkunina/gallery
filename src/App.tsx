@@ -9,10 +9,15 @@ import { Lightbox } from './components/Lightbox/Lightbox';
 import { SkipLink } from './components/SkipLink/SkipLink';
 import { ScrollChihuahua } from './components/ScrollChihuahua/ScrollChihuahua';
 import { GalleryProvider } from './context/GalleryContext';
+import { useAnalytics } from './hooks/useAnalytics';
+import { useSectionAnalytics } from './hooks/useSectionAnalytics';
 
-export default function App() {
+function AppShell() {
+  useAnalytics();
+  useSectionAnalytics();
+
   return (
-    <GalleryProvider>
+    <>
       <SkipLink />
       <Header />
       <main id="main">
@@ -25,6 +30,14 @@ export default function App() {
       <Footer />
       <ScrollChihuahua />
       <Lightbox />
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <GalleryProvider>
+      <AppShell />
     </GalleryProvider>
   );
 }

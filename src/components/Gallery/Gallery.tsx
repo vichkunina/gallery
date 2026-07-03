@@ -14,6 +14,7 @@ import {
 import { getArtworkDisplayName } from '../../utils/artworkDisplay';
 import { hasMultipleViews } from '../../utils/artworkViews';
 import { filterArtworks, GALLERY_FILTERS, type GalleryFilterId } from '../../utils/galleryFilters';
+import { trackGoal } from '../../utils/analytics';
 import { ArtImage } from '../ArtImage/ArtImage';
 import { ArtworkInfo } from '../ArtworkInfo/ArtworkInfo';
 import { SectionLabel } from '../SectionLabel/SectionLabel';
@@ -130,6 +131,7 @@ export function Gallery() {
   };
 
   const expandGallery = useCallback(() => {
+    trackGoal('gallery_expand');
     const scrollY = window.scrollY;
     setExpanded(true);
     requestAnimationFrame(() => {
@@ -147,7 +149,7 @@ export function Gallery() {
           <p className="gallery__intro">
             Оригинальные картины маслом, акварелью и смешанной техникой. Можно купить
             готовую работу или{' '}
-            <a className="gallery__intro-link" href="#contact">
+            <a className="gallery__intro-link" href="#contact" onClick={() => trackGoal('cta_click', { place: 'gallery_intro', target: 'contact' })}>
               заказать картину
             </a>
             .
@@ -169,6 +171,7 @@ export function Gallery() {
               onClick={() => {
                 setActiveFilter(filter.id);
                 setExpanded(filter.id !== 'all');
+                trackGoal('gallery_filter', { filter: filter.id });
               }}
             >
               {filter.label}

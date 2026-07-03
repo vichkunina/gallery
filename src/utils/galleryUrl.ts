@@ -1,3 +1,5 @@
+import { trackPageView } from './analytics';
+
 const WORK_PREFIX = 'work';
 
 /** Old share links → current work id (and optional view). */
@@ -61,14 +63,28 @@ export function resolveWorkLocation(
   return { workId, viewIndex: parseWorkViewFromLocation(location) };
 }
 
-export function parseWorkIdFromLocation(location: Pick<Location, 'hash'>): number | null {
+export function isWorkHash(location: Pick<Location, 'hash'>): boolean {
+  return /^#work\/\d+/.test(location.hash);
+}
+
+export function parseWorkIdFromLocation(
+  location: Pick<Location, 'hash' | 'pathname'>,
+): number | null {
+  const fromPath = parseWorkFromPathname(location.pathname);
+  if (fromPath) return fromPath.workId;
+
   const match = location.hash.match(/^#work\/(\d+)(?:\/(\d+))?$/);
   if (!match) return null;
   const id = Number(match[1]);
   return Number.isFinite(id) && id > 0 ? id : null;
 }
 
-export function parseWorkViewFromLocation(location: Pick<Location, 'hash'>): number {
+export function parseWorkViewFromLocation(
+  location: Pick<Location, 'hash' | 'pathname'>,
+): number {
+  const fromPath = parseWorkFromPathname(location.pathname);
+  if (fromPath) return fromPath.viewIndex;
+
   const match = location.hash.match(/^#work\/(\d+)\/(\d+)$/);
   if (!match) return 0;
   const view = Number(match[2]);
@@ -95,8 +111,8 @@ export function buildWorkHash(workId: number, viewIndex = 0, multiView = false):
 }
 
 export function buildWorkUrl(workId: number, viewIndex = 0, multiView = false): string {
-  const base = `${window.location.origin}${window.location.pathname}${window.location.search}`;
-  return `${base}${buildWorkHash(workId, viewIndex, multiView)}`;
+  const origin = window.location.origin;
+  return `${origin}${buildWorkSharePath(workId, viewIndex, multiView)}`;
 }
 
 export function syncWorkUrl(
@@ -105,13 +121,23 @@ export function syncWorkUrl(
   mode: 'push' | 'replace' = 'replace',
   multiView = false,
 ) {
-  const base = `${window.location.pathname}${window.location.search}`;
-  const next = workId === null ? base : `${base}${buildWorkHash(workId, viewIndex, multiView)}`;
-  if (`${window.location.pathname}${window.location.search}${window.location.hash}` === next) return;
+  const next = workId === null ? '/' : buildWorkSharePath(workId, viewIndex, multiView);
+  if (window.location.pathname === next) return;
 
   if (mode === 'push') {
     history.pushState({ galleryWork: workId, viewIndex, multiView }, '', next);
   } else {
     history.replaceState({ galleryWork: workId, viewIndex, multiView }, '', next);
   }
+  trackPageView(next);
+}
+
+export function scrollToSection(sectionId: string, behavior: ScrollBehavior = 'smooth') {
+  document.getElementById(sectionId)?.scrollIntoView({ behavior, block: 'start' });
+}
+
+export function navigateToSection(sectionId: string) {
+  history.replaceState(null, '', `/#${sectionId}`);
+  trackPageView('/');
+  requestAnimationFrame(() => scrollToSection(sectionId));
 }

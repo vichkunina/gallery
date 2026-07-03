@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { site } from '../../data/content';
 import { useActiveSection } from '../../hooks/useActiveSection';
+import { trackGoal } from '../../utils/analytics';
 import type { SectionId } from '../../types';
 import './Header.css';
 
@@ -60,7 +61,10 @@ export function Header() {
               <a
                 href={item.href}
                 className={`header__link${activeSection === item.id ? ' header__link--active' : ''}`}
-                onClick={() => setMenuOpen(false)}
+                onClick={() => {
+                  setMenuOpen(false);
+                  trackGoal('nav_click', { section: item.id });
+                }}
                 aria-current={activeSection === item.id ? 'true' : undefined}
               >
                 {item.label}

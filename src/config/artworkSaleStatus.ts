@@ -26,6 +26,7 @@ export const artworkSaleStatusById: Partial<Record<number, ArtworkSaleStatus>> =
   31: 'not_for_sale',
   32: 'not_for_sale',
   33: 'not_for_sale',
+  35: 'not_for_sale',
   36: 'not_for_sale',
   41: 'not_for_sale',
   40: 'not_for_sale',

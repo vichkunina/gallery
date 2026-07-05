@@ -5,6 +5,7 @@ import { useGalleryLightboxNavigation } from '../../hooks/useGalleryLightboxNavi
 import { useLightboxKeyboard } from '../../hooks/useLightboxKeyboard';
 import { useLightboxPageLock } from '../../hooks/useLightboxPageLock';
 import { useSwipeNavigation } from '../../hooks/useSwipeNavigation';
+import { usePinchZoom } from '../../hooks/usePinchZoom';
 import { artworkViewAlt, getArtworkViews, hasMultipleViews } from '../../utils/artworkViews';
 import { getArtworkDisplayName } from '../../utils/artworkDisplay';
 import { mediaThumbUrl } from '../../config/media';
@@ -36,6 +37,7 @@ export function Lightbox() {
   const closeRef = useRef<HTMLButtonElement>(null);
   const prevFocus = useRef<HTMLElement | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  const zoomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!selected || views.length === 0) return;
@@ -56,7 +58,12 @@ export function Lightbox() {
       prev,
     });
 
-  useSwipeNavigation(stageRef, isOpen, {
+  const { scale } = usePinchZoom(zoomRef, {
+    enabled: isOpen,
+    resetKey: `${selected?.id ?? 0}-${viewIndex}`,
+  });
+
+  useSwipeNavigation(stageRef, isOpen && scale <= 1, {
     onSwipeLeft: swipeLeft,
     onSwipeRight: swipeRight,
   });
@@ -138,13 +145,15 @@ export function Lightbox() {
             if (event.target === event.currentTarget) close();
           }}
         >
-          <img
-            key={`${selected.id}-${viewIndex}`}
-            className="lightbox__img"
-            src={currentView.src}
-            alt={artworkViewAlt(selected, currentView)}
-            decoding="sync"
-          />
+          <div ref={zoomRef} className="lightbox__zoom">
+            <img
+              key={`${selected.id}-${viewIndex}`}
+              className="lightbox__img"
+              src={currentView.src}
+              alt={artworkViewAlt(selected, currentView)}
+              decoding="sync"
+            />
+          </div>
         </div>
 
         {multipleViews && (

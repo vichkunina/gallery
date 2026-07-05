@@ -39,6 +39,7 @@ export const artworkSaleStatusById: Partial<Record<number, ArtworkSaleStatus>> =
   39: 'sold',
   42: 'sold',
   44: 'not_for_sale',
+  45: 'for_sale',
 };
 
 const DEFAULT_STATUS: ArtworkSaleStatus = 'for_sale';

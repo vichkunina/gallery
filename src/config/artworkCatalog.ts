@@ -3,8 +3,7 @@
  * Если поле не указано — для названия берётся title из artworks.ts,
  * для материалов/размера — поля details/size из artworks.ts.
  *
- * Пример:
- *   5: { name: 'Бифуркация сосны', price: 45_000, materials: 'масло', size: '40×50 см' },
+ * Добавьте price — работа автоматически станет «Можно купить».
  */
 export interface ArtworkCatalogEntry {
   name?: string;

@@ -1,3 +1,5 @@
+import { artworkCatalogById } from './artworkCatalog';
+
 /** Статус продажи работы в галерее. */
 export type ArtworkSaleStatus = 'for_sale' | 'sold' | 'not_for_sale';
 
@@ -8,13 +10,9 @@ export const ARTWORK_SALE_STATUS_LABELS: Record<ArtworkSaleStatus, string> = {
 };
 
 /**
- * Статусы по id работы. Работы без записи считаются доступными для покупки
- * (кнопка «Написать о покупке», без бейджа на карточке).
+ * Явные статусы по id работы (перекрывают правило «есть цена → можно купить»).
  *
- * Пример:
- *   5: 'sold',
- *   12: 'not_for_sale',
- *   18: 'for_sale', // явный бейдж «Можно купить»
+ * Пример в README: sold / not_for_sale перекрывают цену из каталога.
  */
 export const artworkSaleStatusById: Partial<Record<number, ArtworkSaleStatus>> = {
   2: 'not_for_sale',
@@ -39,17 +37,20 @@ export const artworkSaleStatusById: Partial<Record<number, ArtworkSaleStatus>> =
   39: 'sold',
   42: 'sold',
   44: 'not_for_sale',
-  45: 'for_sale',
 };
 
-const DEFAULT_STATUS: ArtworkSaleStatus = 'for_sale';
+const DEFAULT_STATUS: ArtworkSaleStatus = 'not_for_sale';
 
 export function getArtworkSaleStatus(id: number): ArtworkSaleStatus {
-  return artworkSaleStatusById[id] ?? DEFAULT_STATUS;
+  const explicit = artworkSaleStatusById[id];
+  if (explicit) return explicit;
+  if (artworkCatalogById[id]?.price != null) return 'for_sale';
+  return DEFAULT_STATUS;
 }
 
 export function hasExplicitSaleStatus(id: number): boolean {
-  return Object.prototype.hasOwnProperty.call(artworkSaleStatusById, id);
+  if (Object.prototype.hasOwnProperty.call(artworkSaleStatusById, id)) return true;
+  return artworkCatalogById[id]?.price != null;
 }
 
 export function getArtworkSaleStatusLabel(id: number): string {

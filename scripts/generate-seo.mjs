@@ -45,9 +45,10 @@ function parseArtworksWithIds(tsContent) {
 
 function parseArtworkCatalog(tsContent) {
   const catalog = {};
+  const objectBody = extractExportedObject(tsContent, 'artworkCatalogById');
   const re = /(\d+):\s*\{([^}]*)\}/g;
   let match;
-  while ((match = re.exec(tsContent)) !== null) {
+  while ((match = re.exec(objectBody)) !== null) {
     const id = Number(match[1]);
     const body = match[2];
     catalog[id] = {
@@ -193,22 +194,45 @@ function parseArtworks(tsContent) {
   return items;
 }
 
+function extractExportedObject(tsContent, exportName) {
+  const marker = `export const ${exportName}`;
+  const start = tsContent.indexOf(marker);
+  if (start < 0) return '';
+  const braceStart = tsContent.indexOf('{', start);
+  if (braceStart < 0) return '';
+  let depth = 0;
+  for (let i = braceStart; i < tsContent.length; i += 1) {
+    const char = tsContent[i];
+    if (char === '{') depth += 1;
+    if (char === '}') {
+      depth -= 1;
+      if (depth === 0) {
+        return tsContent.slice(braceStart, i + 1);
+      }
+    }
+  }
+  return '';
+}
+
 function parseSaleStatus(tsContent) {
   const map = {};
+  const objectBody = extractExportedObject(tsContent, 'artworkSaleStatusById');
   const re = /(\d+):\s*'(for_sale|sold|not_for_sale)'/g;
   let match;
-  while ((match = re.exec(tsContent)) !== null) {
+  while ((match = re.exec(objectBody)) !== null) {
     map[Number(match[1])] = match[2];
   }
   return map;
 }
 
-function getSaleStatus(id, statusMap) {
-  return statusMap[id] ?? 'for_sale';
+function getSaleStatus(id, statusMap, catalog) {
+  if (statusMap[id]) return statusMap[id];
+  if (catalog[id]?.price != null) return 'for_sale';
+  return 'not_for_sale';
 }
 
-function getForSaleArtworks(artworks, statusMap) {
-  return artworks.filter((art) => getSaleStatus(art.id, statusMap) === 'for_sale');
+function getForSaleArtworks(artworks, statusMap, catalog) {
+  return artworks.filter((art) => getSaleStatus(art.id, statusMap, catalog) === 'for_sale');
 }
 
 const ORDER_FAQS = [
@@ -447,7 +471,7 @@ ${itemsHtml}
 }
 
 function writeLandingPages(artworksWithIds, catalog, statusMap) {
-  const forSale = getForSaleArtworks(artworksWithIds, statusMap);
+  const forSale = getForSaleArtworks(artworksWithIds, statusMap, catalog);
   const personId = `${SITE_URL}/#person`;
 
   const orderDir = path.join(DIST, 'order');
@@ -516,7 +540,7 @@ function writeLandingPages(artworksWithIds, catalog, statusMap) {
 function buildVisualArtworkNode(art, catalog, statusMap) {
   const personId = `${SITE_URL}/#person`;
   const name = getDisplayName(art, catalog);
-  const status = getSaleStatus(art.id, statusMap);
+  const status = getSaleStatus(art.id, statusMap, catalog);
   const workUrl = `${SITE_URL}${buildWorkSharePath(art.id, 0, art.viewCount > 1)}`;
   const node = {
     '@type': 'VisualArtwork',
@@ -754,7 +778,7 @@ function main() {
 
   fs.writeFileSync(indexPath, html, 'utf8');
 
-  const forSaleCount = getForSaleArtworks(artworksWithIds, statusMap).length;
+  const forSaleCount = getForSaleArtworks(artworksWithIds, statusMap, catalog).length;
   console.log(
     `SEO: sitemap.xml (${allImages.length} images, ${artworksWithIds.length} work URLs, 2 landing pages), ${sharePages} share pages, ${landingPages} landings (${forSaleCount} for sale), JSON-LD, noscript → dist/`,
   );

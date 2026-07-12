@@ -53,6 +53,7 @@ export const artworkCatalogById: Partial<Record<number, ArtworkCatalogEntry>> = 
   43: { name: 'Труп невесты', price: 2_000, materials: 'масло', size: '10×10 см' },
   44: { name: 'Белковый обед', materials: 'масло', size: '25×25 см' },
   45: { name: "You're my angel", price: 6_000, materials: 'масло', size: '20×15 см' },
+  46: { name: 'Ирисы', price: 4_000, materials: 'акварель', size: '30×40 см' },
 };
 
 export function formatArtworkPrice(rub: number): string {

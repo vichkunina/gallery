@@ -17,5 +17,6 @@ export const koshmariki: KoshmarikiCollection = {
     { id: 8, title: 'Создание Берточки', img: mediaUrl('images/koshmariki/10-2026-03-14.jpg') },
     { id: 9, title: 'Мы не одни', img: mediaUrl('images/koshmariki/09-2026-05-16.jpg') },
     { id: 10, title: 'Собака завела человека', img: mediaUrl('images/koshmariki/01-2026-06-28.jpg') },
+    { id: 11, title: 'На приеме у психолога', img: mediaUrl('images/koshmariki/11-2026-07-11.jpg') },
   ],
 };

@@ -20,6 +20,18 @@ function absUrl(relativePath) {
   return `${SITE_URL}/${normalized}`;
 }
 
+/** Compact JPEG for messengers (Telegram/WhatsApp reject 5MB+ full-size photos). */
+function thumbPath(imagePath) {
+  if (!imagePath) return imagePath;
+  if (imagePath.includes('/thumbs/')) {
+    return imagePath.replace(/\.(webp|png|jpe?g)$/i, '.jpg');
+  }
+  return imagePath
+    .replace('images/gallery/', 'images/gallery/thumbs/')
+    .replace('images/koshmariki/', 'images/koshmariki/thumbs/')
+    .replace(/\.(webp|png|jpe?g)$/i, '.jpg');
+}
+
 function parseArtworksWithIds(tsContent) {
   const items = [];
   const blockRe = /\{\s*\n\s*id:\s*(\d+),[\s\S]*?\n\s*\},/g;
@@ -105,7 +117,7 @@ function buildWorkSharePage(art, catalog, viewIndex = 0, spaAssets = { script: '
   const sharePath = buildWorkSharePath(art.id, viewIndex, multiView);
   const shareUrl = `${SITE_URL}${sharePath}`;
   const imagePath = art.viewImages?.[viewIndex] ?? art.imagePath;
-  const imageUrl = absUrl(imagePath);
+  const imageUrl = absUrl(thumbPath(imagePath));
   const assetTags = [
     spaAssets.css ? `    <link rel="stylesheet" href="${spaAssets.css}">` : '',
     spaAssets.script ? `    <script type="module" src="${spaAssets.script}"></script>` : '',

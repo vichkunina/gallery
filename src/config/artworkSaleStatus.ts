@@ -15,7 +15,7 @@ export const ARTWORK_SALE_STATUS_LABELS: Record<ArtworkSaleStatus, string> = {
  * Пример в README: sold / not_for_sale перекрывают цену из каталога.
  */
 export const artworkSaleStatusById: Partial<Record<number, ArtworkSaleStatus>> = {
-  49: 'not_for_sale',
+  49: 'sold',
   2: 'not_for_sale',
   9: 'not_for_sale',
   17: 'not_for_sale',

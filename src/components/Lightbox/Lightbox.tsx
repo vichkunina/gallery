@@ -12,6 +12,7 @@ import { mediaThumbUrl } from '../../config/media';
 import { getArtworkSaleStatus } from '../../config/artworkSaleStatus';
 import { trackGoal } from '../../utils/analytics';
 import { ArtworkInfo } from '../ArtworkInfo/ArtworkInfo';
+import { LightboxImage } from './LightboxImage';
 import './Lightbox.css';
 
 export function Lightbox() {
@@ -154,12 +155,10 @@ export function Lightbox() {
           }}
         >
           <div ref={zoomRef} className="lightbox__zoom">
-            <img
+            <LightboxImage
               key={`${selected.id}-${viewIndex}`}
-              className="lightbox__img"
               src={currentView.src}
               alt={artworkViewAlt(selected, currentView)}
-              decoding="sync"
             />
           </div>
         </div>

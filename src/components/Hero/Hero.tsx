@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { site } from '../../data/content';
 import { stickerZones } from '../../data/stickers';
 import { ArtImage } from '../ArtImage/ArtImage';
@@ -10,7 +10,7 @@ import './Hero.css';
 export function Hero() {
   const [ready, setReady] = useState(() => prefersReducedMotion());
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (prefersReducedMotion()) return undefined;
 
     const frame = requestAnimationFrame(() => setReady(true));

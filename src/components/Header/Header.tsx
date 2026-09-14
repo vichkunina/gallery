@@ -5,10 +5,12 @@ import { trackGoal } from '../../utils/analytics';
 import type { SectionId } from '../../types';
 import './Header.css';
 
-const NAV: { href: `#${SectionId}`; id: SectionId; label: string }[] = [
+const NAV: { href: string; id: SectionId | 'buy' | 'order'; label: string }[] = [
   { href: '#about', id: 'about', label: 'Обо мне' },
   { href: '#gallery', id: 'gallery', label: 'Работы' },
   { href: '#koshmariki', id: 'koshmariki', label: 'Кошмарики' },
+  { href: '/buy/', id: 'buy', label: 'Купить' },
+  { href: '/order/', id: 'order', label: 'Заказать' },
 ];
 
 export function Header() {

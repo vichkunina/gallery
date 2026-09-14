@@ -5,6 +5,7 @@ import {
   getArtworkSeoDescription,
   getArtworkSeoImage,
   getArtworkSeoTitle,
+  getArtworkStructuredData,
 } from '../utils/artworkSeo';
 import { getArtworkDisplayName } from '../utils/artworkDisplay';
 import { buildWorkShareUrl } from '../utils/galleryUrl';
@@ -23,8 +24,10 @@ export function useArtworkPageMeta(
     const multiView = hasMultipleViews(selected);
     applyPageMeta({
       title: getArtworkSeoTitle(selected),
+      structuredData: getArtworkStructuredData(selected),
       description: getArtworkSeoDescription(selected),
       url: buildWorkShareUrl(selected.id, viewIndex, multiView),
+      canonicalUrl: buildWorkShareUrl(selected.id, 0, multiView),
       image: getArtworkSeoImage(selected, viewIndex),
       imageAlt: `${getArtworkDisplayName(selected)} — картина, Дарья Вичкунина`,
       type: 'article',

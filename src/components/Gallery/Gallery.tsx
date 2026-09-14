@@ -4,6 +4,8 @@ import { stickerZones } from '../../data/stickers';
 import { useGallery } from '../../context/GalleryContext';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { useReveal } from '../../hooks/useReveal';
+import { buildWorkSharePath } from '../../utils/galleryUrl';
+import { collections } from '../../data/collections';
 import { artworkAlt } from '../../utils/seoAlt';
 import { mediaThumbUrl } from '../../config/media';
 import {
@@ -31,7 +33,7 @@ export function Gallery() {
   const [frameRatios, setFrameRatios] = useState<Record<number, number>>({});
   const [slideIndex, setSlideIndex] = useState(0);
   const isMobileSlider = useMediaQuery('(max-width: 540px)');
-  const eagerCount = isMobileSlider ? 2 : INITIAL_VISIBLE;
+  const eagerCount = isMobileSlider ? 1 : 3;
   const gridRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -80,13 +82,6 @@ export function Gallery() {
     });
   }, [expanded]);
 
-  const preloadHiddenImages = useCallback(() => {
-    filteredArtworks.slice(eagerCount).forEach((art) => {
-      const img = new Image();
-      img.src = mediaThumbUrl(art.img);
-    });
-  }, [eagerCount, filteredArtworks]);
-
   useEffect(() => {
     if (!isMobileSlider) return undefined;
     setSlideIndex(0);
@@ -109,12 +104,6 @@ export function Gallery() {
   useEffect(() => {
     requestAnimationFrame(observeCards);
   }, [expanded, observeCards, activeFilter, filteredArtworks.length]);
-
-  useEffect(() => {
-    if (expanded) return undefined;
-    const id = window.setTimeout(preloadHiddenImages, 600);
-    return () => window.clearTimeout(id);
-  }, [expanded, preloadHiddenImages, activeFilter]);
 
   useEffect(() => () => observerRef.current?.disconnect(), []);
 
@@ -156,6 +145,11 @@ export function Gallery() {
           </p>
         </div>
 
+        <nav className="gallery__collections" aria-label="Тематические подборки">
+          {collections.map((collection) => <a key={collection.slug} href={`/collections/${collection.slug}/`}>{collection.title}</a>)}
+          <a href="/koshmariki/">История Кошмариков</a>
+        </nav>
+
         <div
           className={`gallery__filters${headVisible ? ' reveal--visible' : ' reveal'}`}
           role="tablist"
@@ -188,12 +182,16 @@ export function Gallery() {
         >
           <StickerField items={stickerZones.galleryGrid} />
           {filteredArtworks.map((art, index) => (
-            <button
+            <a
               key={art.id}
-              type="button"
+              href={buildWorkSharePath(art.id, 0, hasMultipleViews(art))}
               className={`gallery__card${!mobileShowAll && !expanded && index >= INITIAL_VISIBLE ? ' gallery__card--folded' : ''}${(expanded || isFiltered) && index >= INITIAL_VISIBLE ? ' gallery__card--revealed' : ''}${isMobileSlider ? ' gallery__card--visible' : ''}`}
               style={{ transitionDelay: cardRevealDelay(index) }}
-              onClick={() => select(art)}
+              onClick={(event) => {
+                if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                event.preventDefault();
+                select(art);
+              }}
               aria-label={getArtworkDisplayName(art)}
             >
               <div
@@ -233,7 +231,7 @@ export function Gallery() {
                 )}
               </div>
               <ArtworkInfo art={art} variant="card" />
-            </button>
+            </a>
           ))}
         </div>
         )}
@@ -265,8 +263,6 @@ export function Gallery() {
               type="button"
               className="gallery__more-btn"
               onClick={expandGallery}
-              onMouseEnter={preloadHiddenImages}
-              onFocus={preloadHiddenImages}
             >
               Показать ещё
               <span className="gallery__more-count">{hiddenCount}</span>

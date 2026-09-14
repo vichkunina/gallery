@@ -373,3 +373,7 @@
     transition: width 0.25s var(--ease-out);
   }
 }
+
+.gallery__card { text-decoration: none; color: inherit; }
+.gallery__collections { display: flex; flex-wrap: wrap; gap: .6rem 1.25rem; margin: 1rem 0 1.5rem; font-size: .85rem; }
+.gallery__collections a { text-decoration: underline; text-underline-offset: .2em; }

@@ -1,3 +1,5 @@
+import { artworkPurchaseUrl } from '../../utils/artworkPurchase';
+import { artworks } from '../../data/artworks';
 import { useEffect, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useGallery } from '../../context/GalleryContext';
@@ -8,7 +10,7 @@ import { useSwipeNavigation } from '../../hooks/useSwipeNavigation';
 import { usePinchZoom } from '../../hooks/usePinchZoom';
 import { artworkViewAlt, getArtworkViews, hasMultipleViews } from '../../utils/artworkViews';
 import { getArtworkDisplayName } from '../../utils/artworkDisplay';
-import { mediaThumbUrl } from '../../config/media';
+import { mediaThumbUrl, mediaImageVariants } from '../../config/media';
 import { getArtworkSaleStatus } from '../../config/artworkSaleStatus';
 import { trackGoal } from '../../utils/analytics';
 import { ArtworkInfo } from '../ArtworkInfo/ArtworkInfo';
@@ -21,7 +23,6 @@ export function Lightbox() {
     selectedIndex,
     total,
     close,
-    closeAndGoToSection,
     next,
     prev,
     hasNext,
@@ -95,10 +96,8 @@ export function Lightbox() {
 
   if (!selected || !currentView) return null;
 
-  const handleBuyClick = (event: React.MouseEvent) => {
-    event.preventDefault();
+  const handleBuyClick = () => {
     trackGoal('buy_intent', { work_id: selected.id });
-    closeAndGoToSection('contact');
   };
 
   return createPortal(
@@ -158,6 +157,7 @@ export function Lightbox() {
             <LightboxImage
               key={`${selected.id}-${viewIndex}`}
               src={currentView.src}
+              nextPreviewSrc={views[viewIndex + 1]?.src ?? artworks[selectedIndex + 1]?.img}
               alt={artworkViewAlt(selected, currentView)}
             />
           </div>
@@ -175,7 +175,7 @@ export function Lightbox() {
                 aria-label={view.label ?? `Фото ${index + 1}`}
                 onClick={() => setViewIndex(index)}
               >
-                <img src={mediaThumbUrl(view.src)} alt="" loading="lazy" decoding="async" />
+                <img src={mediaImageVariants(view.src)[0]?.src ?? mediaThumbUrl(view.src)} alt="" loading="lazy" decoding="async" />
               </button>
             ))}
           </div>
@@ -187,9 +187,10 @@ export function Lightbox() {
           <p className="lightbox__view-label">{currentView.label}</p>
         )}
         <ArtworkInfo art={selected} variant="lightbox" description />
+        <p><a href="/order/">Обсудить свою картину →</a></p>
         <div className="lightbox__aside-action">
           {getArtworkSaleStatus(selected.id) === 'for_sale' ? (
-            <a href="/#contact" className="lightbox__buy" onClick={handleBuyClick}>
+            <a href={artworkPurchaseUrl(selected)} target="_blank" rel="noopener noreferrer" className="lightbox__buy" onClick={handleBuyClick}>
               Написать о покупке →
             </a>
           ) : getArtworkSaleStatus(selected.id) === 'sold' ? (
@@ -220,7 +221,7 @@ export function Lightbox() {
           <ArtworkInfo art={selected} variant="lightbox" description />
         </div>
         {getArtworkSaleStatus(selected.id) === 'for_sale' ? (
-          <a href="/#contact" className="lightbox__buy" onClick={handleBuyClick}>
+          <a href={artworkPurchaseUrl(selected)} target="_blank" rel="noopener noreferrer" className="lightbox__buy" onClick={handleBuyClick}>
             Написать о покупке →
           </a>
         ) : getArtworkSaleStatus(selected.id) === 'sold' ? (

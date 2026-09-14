@@ -4,6 +4,8 @@ export interface PageMeta {
   title: string;
   description: string;
   url: string;
+  canonicalUrl?: string;
+  structuredData?: object;
   image: string;
   imageAlt: string;
   type?: 'website' | 'article';
@@ -16,6 +18,10 @@ const DEFAULT_META: PageMeta = {
   image: 'https://vichkunina.art/og.jpg?v=3',
   imageAlt: 'Дарья Вичкунина — художник, портрет',
   type: 'website',
+  structuredData: { '@context': 'https://schema.org', '@graph': [
+    { '@type': 'WebSite', name: SEO.title, url: SITE_URL },
+    { '@type': 'Person', name: SEO.author, url: SITE_URL, sameAs: [SEO.telegram] },
+  ] },
 };
 
 function setNamedMeta(name: string, content: string) {
@@ -49,6 +55,14 @@ function setCanonical(url: string) {
 }
 
 export function applyPageMeta(meta: PageMeta) {
+  let structured = document.getElementById('page-structured-data');
+  if (!structured) {
+    structured = document.createElement('script');
+    structured.setAttribute('type', 'application/ld+json');
+    structured.id = 'page-structured-data';
+    document.head.appendChild(structured);
+  }
+  if (meta.structuredData) structured.textContent = JSON.stringify(meta.structuredData);
   document.title = meta.title;
   setNamedMeta('description', meta.description);
   setPropertyMeta('og:type', meta.type ?? 'website');
@@ -64,7 +78,7 @@ export function applyPageMeta(meta: PageMeta) {
   setNamedMeta('twitter:description', meta.description);
   setNamedMeta('twitter:image', meta.image);
   setNamedMeta('twitter:image:alt', meta.imageAlt);
-  setCanonical(meta.url);
+  setCanonical(meta.canonicalUrl ?? meta.url);
 }
 
 export function resetPageMeta() {

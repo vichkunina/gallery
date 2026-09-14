@@ -69,3 +69,34 @@ src/
   data/                    — контент (легко менять)
   types/                   — TypeScript-типы
 ```
+
+### Optimized images, static SEO and promotion
+
+`npm run build` renders the home page to HTML and generates work pages, canonical aliases,
+collections and a sitemap from the actual TypeScript catalogue. Client and build-time titles,
+prices and availability share the same data. Run `npm run check:seo` and
+`npm run check:behavior` after changes.
+
+The full photographs in `media/` are unchanged. To add smaller card previews after importing
+new work, run `npm run thumbs:responsive` (Python 3 + Pillow). This reads existing 960px
+thumbnails and creates versioned 320/640px JPEG copies plus
+`src/config/responsiveImages.json`. Commit the manifest with the corresponding site update.
+Then publish with `npm run deploy:yc -- --previews-dir media`: only files under
+`images/*/thumbs/responsive/` are uploaded as previews, never the original photographs.
+Assets and previews are published before HTML, with the home page last.
+
+Hashed previews, JavaScript, CSS and WOFF2 fonts have immutable one-year caching.
+HTML is revalidated; purge CDN HTML caches after publication. Keep old hashed assets available
+for visitors with old pages. Original image URLs and download links are preserved.
+
+Fonts are served locally under `public/fonts/`, with OFL licenses. To update the same font
+families deliberately, run `python3 scripts/vendor-fonts.py` and review the generated files.
+Regular builds do not download fonts.
+
+`npm run promotion` prepares Pinterest draft text, source images and UTM links under
+`docs/promotion/`. It does not publish to a social account. The same folder contains Telegram
+drafts, a four-week plan and a metrics template. No Pinterest link is displayed on the site.
+
+`npm run seo:notify-yandex` submits the built sitemap's URLs to IndexNow after deployment.
+Acceptance by IndexNow is not confirmation of indexing. Webmaster, Search Console, Pinterest
+site verification and Metrika goal configuration still require the owner's account access.

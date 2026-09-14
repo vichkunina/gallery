@@ -44,7 +44,7 @@ export const site: SiteContent = {
     telegramHref: 'https://t.me/vichkunina',
   },
   contacts: [
-    { label: 'Канал', value: '@vichkunina_d', href: 'https://t.me/vichkunina_d' },
+    { label: 'Новые работы и процесс', value: '@vichkunina_d', href: 'https://t.me/vichkunina_d' },
     { label: 'Личка', value: '@vichkunina', href: 'https://t.me/vichkunina' },
   ],
 };

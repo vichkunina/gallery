@@ -67,11 +67,11 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
   const openedViaPush = useRef(false);
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(() => {
-    const resolved = resolveWorkLocation(window.location);
+    const resolved = typeof window === 'undefined' ? null : resolveWorkLocation(window.location);
     return resolved ? resolveWorkIndex(resolved.workId) : null;
   });
   const [viewIndex, setViewIndexState] = useState(() => {
-    const resolved = resolveWorkLocation(window.location);
+    const resolved = typeof window === 'undefined' ? null : resolveWorkLocation(window.location);
     if (!resolved) return 0;
     const workIndex = resolveWorkIndex(resolved.workId);
     if (workIndex === null) return 0;
@@ -177,7 +177,7 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const applyLocation = () => {
-      const resolved = resolveWorkLocation(window.location);
+      const resolved = typeof window === 'undefined' ? null : resolveWorkLocation(window.location);
       const workIndex = resolved ? resolveWorkIndex(resolved.workId) : null;
       const view =
         workIndex === null ? 0 : clampViewIndex(workIndex, resolved?.viewIndex ?? 0);

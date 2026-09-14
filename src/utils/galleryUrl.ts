@@ -1,3 +1,4 @@
+import { SITE_URL } from '../config/seo';
 import { trackPageView } from './analytics';
 
 const WORK_PREFIX = 'work';
@@ -99,7 +100,7 @@ export function buildWorkSharePath(workId: number, viewIndex = 0, multiView = fa
 }
 
 export function buildWorkShareUrl(workId: number, viewIndex = 0, multiView = false): string {
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://vichkunina.art';
+  const origin = SITE_URL;
   return `${origin}${buildWorkSharePath(workId, viewIndex, multiView)}`;
 }
 

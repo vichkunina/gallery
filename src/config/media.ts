@@ -1,3 +1,5 @@
+import responsiveImages from './responsiveImages.json';
+
 const MEDIA_BASE = import.meta.env.VITE_MEDIA_BASE_URL as string | undefined;
 
 /** URL for media in Object Storage / CDN (same origin in prod when base is unset). */
@@ -24,4 +26,18 @@ export function mediaThumbUrl(src: string): string {
     return src.replace('/images/koshmariki/', '/images/koshmariki/thumbs/').replace(/\.(webp|png|jpe?g)$/i, '.jpg');
   }
   return src;
+}
+
+interface ImageVariant { src: string; width: number; height: number }
+const variantsByThumb: Record<string, ImageVariant[]> = responsiveImages;
+
+export function mediaImageVariants(src: string): ImageVariant[] {
+  const thumb = mediaThumbUrl(src);
+  const key = thumb.match(/(\/images\/[^?#]+)/)?.[1] ?? thumb;
+  return (variantsByThumb[key] ?? []).map((variant) => ({ ...variant, src: mediaUrl(variant.src) }));
+}
+
+export function mediaImageSrcSet(src: string): string | undefined {
+  const variants = mediaImageVariants(src);
+  return variants.length ? variants.map((variant) => `${variant.src} ${variant.width}w`).join(', ') : undefined;
 }

@@ -13,7 +13,11 @@
     "import:desktop": "bash scripts/import-desktop.sh",
     "sync:desktop": "node scripts/sync-from-desktop.mjs",
     "thumbs": "node scripts/generate-thumbs.mjs",
-    "seo:notify-yandex": "node scripts/notify-yandex-indexnow.mjs"
+    "seo:notify-yandex": "node scripts/notify-yandex-indexnow.mjs",
+    "check:seo": "python3 scripts/check-seo.py",
+    "promotion": "node scripts/generate-promotion.mjs",
+    "thumbs:responsive": "python3 scripts/generate-responsive.py",
+    "check:behavior": "node scripts/check-behavior.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

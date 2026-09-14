@@ -7,7 +7,6 @@ export function useAnalytics() {
     if (!ANALYTICS_ENABLED) return undefined;
 
     initAnalytics();
-    trackPageView();
 
     const onNavigate = () => trackPageView();
     window.addEventListener('popstate', onNavigate);

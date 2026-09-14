@@ -1,3 +1,4 @@
+import { LightboxImage } from '../Lightbox/LightboxImage';
 import { useCallback, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { koshmariki } from '../../data/koshmariki';
@@ -50,7 +51,7 @@ export function Koshmariki() {
             <h2 className="koshmariki__title">{koshmariki.title}</h2>
             <span className="koshmariki__count">{items.length} работ</span>
           </div>
-          <p className="koshmariki__intro">{koshmariki.description[0]}</p>
+          <p className="koshmariki__intro">{koshmariki.description[0]} <a href="/koshmariki/">Все истории Берты →</a></p>
         </header>
 
         <div className="koshmariki__grid sticker-zone">
@@ -71,7 +72,7 @@ export function Koshmariki() {
                 <ArtImage
                   src={mediaThumbUrl(item.img)}
                   alt={`${item.title} — серия Кошмарики, Дарья Вичкунина`}
-                  loading={index < 4 ? 'eager' : 'lazy'}
+                  loading="lazy"
                   fit="contain"
                 />
                 <span className="koshmariki__card-overlay">
@@ -98,6 +99,7 @@ export function Koshmariki() {
               <span className="koshmariki__lightbox-counter">
                 {selectedIndex + 1} / {items.length}
               </span>
+              <a href={selected.img} download>Скачать фото ↓</a>
               <button type="button" className="koshmariki__lightbox-close" onClick={close}>
                 Закрыть
               </button>
@@ -116,7 +118,7 @@ export function Koshmariki() {
           </button>
 
             <div ref={stageRef} className="koshmariki__lightbox-stage">
-              <img className="koshmariki__lightbox-img" src={selected.img} alt={selected.title} />
+              <LightboxImage key={selected.id} className="koshmariki__lightbox-img" src={selected.img} alt={selected.title} nextPreviewSrc={items[selectedIndex + 1]?.img} />
             </div>
 
           <button

@@ -20,6 +20,9 @@ export function Footer() {
         <nav className="footer__links" aria-label="Полезные ссылки">
           <a href="/buy/">Купить картину</a>
           <a href="/order/">Заказать картину</a>
+          <a href="/collections/cinema/">Картины и кино</a>
+          <a href="/collections/magnets/">Магниты</a>
+          <a href="/koshmariki/">Кошмарики</a>
         </nav>
         <span className="footer__note">Сделано с любовью к искусству</span>
       </div>

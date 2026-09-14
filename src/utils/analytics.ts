@@ -75,6 +75,7 @@ export function trackGoal(
 
 export function trackOutboundLink(href: string, label: string) {
   trackGoal('outbound_click', { href, label });
+  if (href === 'https://t.me/vichkunina_d') trackGoal('subscribe_intent', { place: label });
 }
 
 export function getMetrikaCounterId(): number | null {

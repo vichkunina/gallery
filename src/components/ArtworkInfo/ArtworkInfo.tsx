@@ -1,3 +1,4 @@
+import { getArtworkText } from '../../utils/artworkSeo';
 import type { Artwork } from '../../types';
 import {
   getArtworkDisplayName,
@@ -51,7 +52,7 @@ export function ArtworkInfo({ art, variant, description = false }: ArtworkInfoPr
   const price = getArtworkPriceLabel(art.id);
   const meta = getArtworkMetaLine(art);
   const facts = getArtworkFacts(art);
-  const desc = description && art.desc ? art.desc : null;
+  const desc = description ? getArtworkText(art).join(' ') : null;
 
   if (variant === 'card') {
     const cardDesc = art.desc ? art.desc : null;

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './ArtImage.css';
+import { mediaImageSrcSet, mediaImageVariants } from '../../config/media';
 
 interface ArtImageProps {
   src: string;
@@ -8,6 +9,7 @@ interface ArtImageProps {
   loading?: 'eager' | 'lazy';
   fit?: 'cover' | 'contain';
   priority?: boolean;
+  sizes?: string;
   onDimensions?: (width: number, height: number) => void;
 }
 
@@ -18,8 +20,11 @@ export function ArtImage({
   loading = 'lazy',
   fit = 'cover',
   priority = false,
+  sizes = "(max-width: 540px) 85vw, (max-width: 900px) 45vw, 30vw",
   onDimensions,
 }: ArtImageProps) {
+  const variants = mediaImageVariants(src);
+  const dimensions = variants[variants.length - 1];
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
 
@@ -38,7 +43,11 @@ export function ArtImage({
       <div className="art-image__skeleton" aria-hidden="true" />
       <img
         className="art-image__img"
-        src={src}
+        src={variants[1]?.src ?? src}
+        srcSet={mediaImageSrcSet(src)}
+        sizes={dimensions ? sizes : undefined}
+        width={dimensions?.width}
+        height={dimensions?.height}
         alt={alt}
         loading={priority ? 'eager' : loading}
         decoding="async"

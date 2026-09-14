@@ -1,3 +1,4 @@
+import { getArtworkSaleStatus } from '../config/artworkSaleStatus';
 import type { Artwork } from '../types';
 import { artworkCatalogById, formatArtworkPrice } from '../config/artworkCatalog';
 
@@ -6,6 +7,7 @@ export function getArtworkDisplayName(art: Artwork): string {
 }
 
 export function getArtworkPriceLabel(id: number): string | null {
+  if (getArtworkSaleStatus(id) !== 'for_sale') return null;
   const price = artworkCatalogById[id]?.price;
   return price != null ? formatArtworkPrice(price) : null;
 }

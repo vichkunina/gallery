@@ -5,7 +5,6 @@ import { useGallery } from '../../context/GalleryContext';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { useReveal } from '../../hooks/useReveal';
 import { buildWorkSharePath } from '../../utils/galleryUrl';
-import { collections } from '../../data/collections';
 import { artworkAlt } from '../../utils/seoAlt';
 import { mediaThumbUrl } from '../../config/media';
 import {
@@ -145,8 +144,7 @@ export function Gallery() {
           </p>
         </div>
 
-        <nav className="gallery__collections" aria-label="Тематические подборки">
-          {collections.map((collection) => <a key={collection.slug} href={`/collections/${collection.slug}/`}>{collection.title}</a>)}
+        <nav className="gallery__collections" aria-label="История Кошмариков">
           <a href="/koshmariki/">История Кошмариков</a>
         </nav>
 

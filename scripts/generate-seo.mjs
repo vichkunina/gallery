@@ -96,8 +96,6 @@ function buildWorkSharePage(art, catalog, viewIndex = 0, spaAssets = { script: '
     ] },
   ] };
   const textHtml = seo.getArtworkText(art).map((text) => `<p>${escapeXml(text)}</p>`).join('');
-  const related = seo.collections.filter((collection) => collection.ids.includes(art.id));
-  const relatedHtml = related.map((collection) => `<a href="/collections/${collection.slug}/">${escapeXml(collection.title)}</a>`).join(' · ');
 
   const imagePath = art.viewImages?.[viewIndex] ?? art.imagePath;
   const imageUrl = `https://storage.yandexcloud.net/galleryvic/${thumbPath(imagePath)}`;
@@ -146,7 +144,6 @@ ${assetTags}
         <p>${getSaleStatus(art.id, statusMap, catalog) === 'for_sale'
           ? `<a href="${buyHref(art, catalog)}">Написать о покупке «${escapeXml(name)}»</a>`
           : '<a href="/order/">Обсудить свою картину</a>'}</p>
-        <p>${relatedHtml}</p>
         <p><a href="${SITE_URL}/">Галерея Дарьи Вичкуниной</a> · <a href="/buy/">Картины в продаже</a></p>
       </article>
     </div>
@@ -354,7 +351,7 @@ function buildLandingPage({ title, description, canonicalPath, jsonLdGraph, body
         <a href="${SITE_URL}/#contact">Контакты</a>
       </nav>
       ${bodyHtml}
-      <footer class="seo__footer"><p><a href="/collections/cinema/">Картины и кино</a> · <a href="/collections/magnets/">Магниты</a> · <a href="/collections/landscapes/">Пейзажи</a> · <a href="/koshmariki/">Кошмарики</a></p><p>Новые работы и процесс: <a href="https://t.me/vichkunina_d" data-goal="subscribe_intent">Telegram</a></p></footer>
+      <footer class="seo__footer"><p><a href="/koshmariki/">Кошмарики</a></p><p>Новые работы и процесс: <a href="https://t.me/vichkunina_d" data-goal="subscribe_intent">Telegram</a></p></footer>
     </main>
   </body>
 </html>

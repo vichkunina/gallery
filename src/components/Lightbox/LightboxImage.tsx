@@ -1,3 +1,4 @@
+import { loadOriginalImage } from '../../utils/loadOriginalImage';
 import { useEffect, useState } from 'react';
 import { mediaThumbUrl, mediaImageVariants } from '../../config/media';
 
@@ -11,33 +12,16 @@ interface LightboxImageProps {
 /** Show the cached thumbnail until the full-size image has loaded and decoded. */
 export function LightboxImage({ src, alt, className = "lightbox__img", nextPreviewSrc }: LightboxImageProps) {
   const previewSrc = mediaImageVariants(src)[1]?.src ?? mediaThumbUrl(src);
+  const [attempt, setAttempt] = useState(0);
+  const [errorSrc, setErrorSrc] = useState<string | null>(null);
   const [readySrc, setReadySrc] = useState<string | null>(null);
   const [failedPreviewSrc, setFailedPreviewSrc] = useState<string | null>(null);
   const showOriginal = readySrc === src || failedPreviewSrc === previewSrc || previewSrc === src;
 
   useEffect(() => {
-    if (previewSrc === src) return undefined;
-
-    let active = true;
-    const original = new Image();
-    original.fetchPriority = 'high';
-    original.decoding = 'async';
-    original.onload = async () => {
-      try {
-        await original.decode();
-      } catch {
-        // A loaded image can still be displayed if explicit decoding fails.
-      }
-      if (active) setReadySrc(src);
-    };
-    original.src = src;
-
-    return () => {
-      active = false;
-      original.onload = null;
-      if (!original.complete) original.src = '';
-    };
-  }, [src, previewSrc]);
+    setErrorSrc(null);
+    return loadOriginalImage(src, () => setReadySrc(src), () => setErrorSrc(src));
+  }, [src, attempt]);
 
   useEffect(() => {
     if (readySrc !== src || !nextPreviewSrc) return undefined;
@@ -51,6 +35,7 @@ export function LightboxImage({ src, alt, className = "lightbox__img", nextPrevi
   }, [readySrc, src, nextPreviewSrc]);
 
   return (
+    <>
     <img
       className={className}
       src={showOriginal ? src : previewSrc}
@@ -58,5 +43,14 @@ export function LightboxImage({ src, alt, className = "lightbox__img", nextPrevi
       decoding="async"
       onError={showOriginal ? undefined : () => setFailedPreviewSrc(previewSrc)}
     />
+    {readySrc !== src && (
+      <div className="lightbox-image__status" role="status">
+        {errorSrc === src ? <>
+          <span>Не удалось загрузить полное фото.</span>
+          <button type="button" onClick={() => { setErrorSrc(null); setAttempt((value) => value + 1); }}>Повторить</button>
+        </> : <span>Загружается полное фото…</span>}
+      </div>
+    )}
+    </>
   );
 }

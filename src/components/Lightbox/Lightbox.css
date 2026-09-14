@@ -461,3 +461,8 @@
 .lightbox__share { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.75rem; font-size: 0.75rem; }
 .lightbox__share button { min-height: 44px; color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
 .lightbox__share input { width: 100%; min-height: 44px; padding: 0.5rem; color: #fff; background: #222; border: 1px solid #777; }
+
+.lightbox-image__status { position: absolute; bottom: 0.75rem; left: 50%; transform: translateX(-50%); z-index: 3; max-width: 90%; padding: 0.5rem 0.75rem; background: rgba(0, 0, 0, 0.8); color: white; font-size: 0.75rem; border-radius: 0.5rem; text-align: center; }
+.lightbox-image__status button { display: block; margin: 0 auto; min-height: 44px; color: inherit; text-decoration: underline; }
+
+.lightbox__zoom, .koshmariki__lightbox-stage { position: relative; }

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { createServer } from 'vite';
 const server = await createServer({ mode: 'production', server: { middlewareMode: true, hmr: false }, appType: 'custom', define: { 'import.meta.env.DEV': 'false', 'import.meta.env.PROD': 'true' } });
 try {
@@ -27,6 +28,10 @@ try {
   assert.match(draft.searchParams.get('text'), /Киллиан Мерфи №2/);
   assert.match(draft.searchParams.get('text'), /https:\/\/vichkunina.art\/work\/48\//);
   for (const art of artworks) {
+    const album = fs.readFileSync(new URL(`../dist/work/${art.id}/index.html`, import.meta.url), 'utf8');
+    const graph = JSON.parse(album.match(/<script id="page-structured-data" type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])['@graph'];
+    const { '@context': _context, ...expectedNode } = seo.getArtworkStructuredData(art);
+    assert.deepEqual(graph.find(node => node['@type'] === 'VisualArtwork'), JSON.parse(JSON.stringify(expectedNode)), `Static/client SEO differs for ${art.id}`);
     const variants = mediaImageVariants(art.img);
     assert.equal(variants.length, 3, art.img);
     assert.ok(variants[0].width <= variants[1].width);

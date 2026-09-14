@@ -5,7 +5,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -22,10 +22,10 @@ function isImage(file) {
 
 function makeThumb(srcPath, destPath) {
   fs.mkdirSync(path.dirname(destPath), { recursive: true });
-  execSync(
-    `sips -Z ${MAX_WIDTH} -s format jpeg -s formatOptions ${QUALITY} ${JSON.stringify(srcPath)} --out ${JSON.stringify(destPath)}`,
-    { stdio: 'ignore' },
-  );
+  execFileSync('sips', [
+    '-Z', String(MAX_WIDTH), '-s', 'format', 'jpeg',
+    '-s', 'formatOptions', String(QUALITY), srcPath, '--out', destPath,
+  ], { stdio: 'ignore' });
 }
 
 function processDir(dirName) {

@@ -4,7 +4,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -14,7 +13,6 @@ import { getArtworkViews, hasMultipleViews } from '../utils/artworkViews';
 import {
   isLegacyWorkHash,
   isWorkHash,
-  parseWorkIdFromLocation,
   resolveWorkLocation,
   syncWorkUrl,
   navigateToSection,
@@ -64,8 +62,6 @@ function isMultiViewWork(workIndex: number | null): boolean {
 }
 
 export function GalleryProvider({ children }: { children: ReactNode }) {
-  const openedViaPush = useRef(false);
-
   const [selectedIndex, setSelectedIndex] = useState<number | null>(() => {
     const resolved = typeof window === 'undefined' ? null : resolveWorkLocation(window.location);
     return resolved ? resolveWorkIndex(resolved.workId) : null;
@@ -116,7 +112,6 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       setViewIndexState(0);
       syncUrl(index, 0, wasClosed ? 'push' : 'replace');
       trackGoal('artwork_open', getArtworkOpenParams(art));
-      if (wasClosed) openedViaPush.current = true;
     },
     [selectedIndex, syncUrl],
   );
@@ -129,13 +124,8 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
     });
     setSelectedIndex(null);
     setViewIndexState(0);
-
-    if (openedViaPush.current && parseWorkIdFromLocation(window.location) !== null) {
-      openedViaPush.current = false;
-      history.back();
-      return;
-    }
-
+    // Always replace URL (not history.back): back() races with unlock and
+    // often leaves mobile browsers scrolled to the top (visible in Webvisor).
     syncUrl(null, 0, 'replace');
   }, [syncUrl, selected?.id, flushLightboxTime, resetLightboxTime]);
 
@@ -145,35 +135,27 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       resetLightboxTime();
       setSelectedIndex(null);
       setViewIndexState(0);
-      openedViaPush.current = false;
       navigateToSection(sectionId);
     },
     [flushLightboxTime, resetLightboxTime, selected?.id],
   );
 
-  const next = useCallback(() => {
-    setSelectedIndex((index) => {
-      if (index === null || index >= artworks.length - 1) return index;
-      flushLightboxTime(artworks[index]?.id);
-      const nextIndex = index + 1;
-      setViewIndexState(0);
-      syncUrl(nextIndex, 0, 'replace');
-      trackGoal('artwork_nav', { direction: 'next', work_id: artworks[nextIndex]?.id });
-      return nextIndex;
+  const move = useCallback((direction: -1 | 1) => {
+    if (selectedIndex === null) return;
+    const index = selectedIndex + direction;
+    if (index < 0 || index >= artworks.length) return;
+    flushLightboxTime(artworks[selectedIndex]?.id);
+    setSelectedIndex(index);
+    setViewIndexState(0);
+    syncUrl(index, 0, 'replace');
+    trackGoal('artwork_nav', {
+      direction: direction === 1 ? 'next' : 'prev',
+      work_id: artworks[index]?.id,
     });
-  }, [syncUrl, flushLightboxTime]);
+  }, [selectedIndex, syncUrl, flushLightboxTime]);
 
-  const prev = useCallback(() => {
-    setSelectedIndex((index) => {
-      if (index === null || index <= 0) return index;
-      flushLightboxTime(artworks[index]?.id);
-      const prevIndex = index - 1;
-      setViewIndexState(0);
-      syncUrl(prevIndex, 0, 'replace');
-      trackGoal('artwork_nav', { direction: 'prev', work_id: artworks[prevIndex]?.id });
-      return prevIndex;
-    });
-  }, [syncUrl, flushLightboxTime]);
+  const next = useCallback(() => move(1), [move]);
+  const prev = useCallback(() => move(-1), [move]);
 
   useEffect(() => {
     const applyLocation = () => {
@@ -183,7 +165,6 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
         workIndex === null ? 0 : clampViewIndex(workIndex, resolved?.viewIndex ?? 0);
       setSelectedIndex(workIndex);
       setViewIndexState(view);
-      if (workIndex === null) openedViaPush.current = false;
 
       if (
         resolved &&

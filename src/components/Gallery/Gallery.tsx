@@ -6,7 +6,7 @@ import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { useReveal } from '../../hooks/useReveal';
 import { buildWorkSharePath } from '../../utils/galleryUrl';
 import { artworkAlt } from '../../utils/seoAlt';
-import { mediaThumbUrl } from '../../config/media';
+import { mediaThumbUrl, mediaImageVariants } from '../../config/media';
 import {
   getArtworkSaleStatus,
   getArtworkSaleStatusLabel,
@@ -24,12 +24,17 @@ import './Gallery.css';
 
 const INITIAL_VISIBLE = 9;
 
+function getFrameRatio(src: string): number {
+  const variants = mediaImageVariants(src);
+  const dimensions = variants[variants.length - 1];
+  return dimensions ? Math.min(Math.max(dimensions.width / dimensions.height, 0.62), 1.55) : 4 / 5;
+}
+
 export function Gallery() {
   const { select } = useGallery();
   const { ref, visible: headVisible } = useReveal(0.12);
   const [expanded, setExpanded] = useState(false);
   const [activeFilter, setActiveFilter] = useState<GalleryFilterId>('all');
-  const [frameRatios, setFrameRatios] = useState<Record<number, number>>({});
   const [slideIndex, setSlideIndex] = useState(0);
   const isMobileSlider = useMediaQuery('(max-width: 540px)');
   const eagerCount = isMobileSlider ? 1 : 3;
@@ -194,11 +199,7 @@ export function Gallery() {
             >
               <div
                 className="gallery__frame"
-                style={
-                  frameRatios[art.id]
-                    ? ({ '--frame-ratio': String(frameRatios[art.id]) } as React.CSSProperties)
-                    : undefined
-                }
+                style={{ '--frame-ratio': String(getFrameRatio(art.img)) } as React.CSSProperties}
               >
                 <ArtImage
                   src={mediaThumbUrl(art.img)}
@@ -206,13 +207,7 @@ export function Gallery() {
                   fit="contain"
                   loading={index < eagerCount ? 'eager' : 'lazy'}
                   priority={index === 0}
-                  onDimensions={(width, height) => {
-                    const ratio = width / height;
-                    const clamped = Math.min(Math.max(ratio, 0.62), 1.55);
-                    setFrameRatios((prev) =>
-                      prev[art.id] === clamped ? prev : { ...prev, [art.id]: clamped },
-                    );
-                  }}
+
                 />
                 {hasMultipleViews(art) && (
                   <span className="gallery__photos" aria-hidden="true">

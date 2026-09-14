@@ -28,7 +28,7 @@ try {
 const env = loadEnv('production', ROOT, 'VITE_');
 
 
-const SITE_URL = 'https://vichkunina.art';
+const SITE_URL = seo.SITE_URL;
 const SITE_TITLE = 'Дарья Вичкунина — художник | галерея картин, заказ картин';
 const SITE_DESC =
   'Художник в Санкт-Петербурге: оригинальные картины маслом, акварелью и смешанной техникой. Купить готовую работу или заказать картину на заказ.';
@@ -68,10 +68,7 @@ function getWorkDescription(art) {
   return seo.getArtworkSeoDescription(art);
 }
 
-function buildWorkSharePath(workId, viewIndex = 0, _multiView = false) {
-  if (viewIndex > 0) return `/work/${workId}/${viewIndex + 1}/`;
-  return `/work/${workId}/`;
-}
+const { buildWorkSharePath } = seo;
 
 function extractSpaAssets(indexHtml) {
   const script = indexHtml.match(/<script type="module" src="([^"]+)"><\/script>/)?.[1] ?? '';
@@ -98,7 +95,7 @@ function buildWorkSharePage(art, catalog, viewIndex = 0, spaAssets = { script: '
   const textHtml = seo.getArtworkText(art).map((text) => `<p>${escapeXml(text)}</p>`).join('');
 
   const imagePath = art.viewImages?.[viewIndex] ?? art.imagePath;
-  const imageUrl = `https://storage.yandexcloud.net/galleryvic/${thumbPath(imagePath)}`;
+  const imageUrl = seo.getArtworkSeoImage(art, viewIndex);
   const assetTags = [
     spaAssets.css ? `    <link rel="stylesheet" href="${spaAssets.css}">` : '',
     spaAssets.script ? `    <script type="module" src="${spaAssets.script}"></script>` : '',
@@ -508,32 +505,8 @@ function writeLandingPages(artworksWithIds, catalog, statusMap) {
   return 2;
 }
 
-function buildVisualArtworkNode(art, catalog, statusMap) {
-  const personId = `${SITE_URL}/#person`;
-  const name = getDisplayName(art, catalog);
-  const status = getSaleStatus(art.id, statusMap, catalog);
-  const workUrl = `${SITE_URL}${buildWorkSharePath(art.id, 0, art.viewCount > 1)}`;
-  const node = {
-    '@type': 'VisualArtwork',
-    name,
-    description: getWorkDescription(art, catalog),
-    artMedium: catalog[art.id]?.materials ?? (art.details !== '—' ? art.details : undefined),
-    image: absUrl(art.imagePath),
-    creator: { '@id': personId },
-    url: workUrl,
-  };
-
-  const price = catalog[art.id]?.price;
-  if (status === 'for_sale') {
-    node.offers = {
-      '@type': 'Offer',
-      price: price != null ? String(price) : undefined,
-      priceCurrency: 'RUB',
-      availability: 'https://schema.org/InStock',
-      url: workUrl,
-    };
-  }
-
+function buildVisualArtworkNode(art) {
+  const { '@context': _context, ...node } = seo.getArtworkStructuredData(art);
   return node;
 }
 

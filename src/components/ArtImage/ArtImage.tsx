@@ -10,7 +10,6 @@ interface ArtImageProps {
   fit?: 'cover' | 'contain';
   priority?: boolean;
   sizes?: string;
-  onDimensions?: (width: number, height: number) => void;
 }
 
 export function ArtImage({
@@ -21,7 +20,6 @@ export function ArtImage({
   fit = 'cover',
   priority = false,
   sizes = "(max-width: 540px) 85vw, (max-width: 900px) 45vw, 30vw",
-  onDimensions,
 }: ArtImageProps) {
   const variants = mediaImageVariants(src);
   const dimensions = variants[variants.length - 1];
@@ -52,13 +50,7 @@ export function ArtImage({
         loading={priority ? 'eager' : loading}
         decoding="async"
         {...(priority ? { fetchpriority: 'high' as const } : {})}
-        onLoad={(event) => {
-          setLoaded(true);
-          const { naturalWidth, naturalHeight } = event.currentTarget;
-          if (naturalWidth > 0 && naturalHeight > 0) {
-            onDimensions?.(naturalWidth, naturalHeight);
-          }
-        }}
+        onLoad={() => setLoaded(true)}
         onError={() => setFailed(true)}
       />
     </div>

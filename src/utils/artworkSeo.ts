@@ -39,6 +39,7 @@ export function getArtworkStructuredData(art: Artwork) {
   return {
     '@context': 'https://schema.org', '@type': 'VisualArtwork',
     name: getArtworkDisplayName(art), description: getArtworkSeoDescription(art),
+    artMedium: artworkCatalogById[art.id]?.materials ?? (art.details !== '—' ? art.details : undefined),
     image: new URL(art.img, SITE_URL).href, url,
     creator: { '@type': 'Person', name: 'Дарья Вичкунина', url: SITE_URL },
     ...(status === 'for_sale' ? { offers: {

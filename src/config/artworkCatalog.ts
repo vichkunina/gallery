@@ -54,6 +54,8 @@ export const artworkCatalogById: Partial<Record<number, ArtworkCatalogEntry>> = 
   44: { name: 'Белковый обед', materials: 'масло', size: '25×25 см' },
   45: { name: "You're my angel", price: 6_000, materials: 'масло', size: '20×15 см' },
   46: { name: 'Ирисы', price: 4_000, materials: 'акварель', size: '30×40 см' },
+  48: { name: 'Киллиан Мерфи №2', price: 30_000, materials: 'акрил', size: '50×50 см' },
+  49: { name: 'Скалы', materials: 'масло', size: '30×40 см' },
   47: { name: 'Барашек, исполняющий желания', price: 10_000, materials: 'масло', size: '30×40 см' },
 };
 

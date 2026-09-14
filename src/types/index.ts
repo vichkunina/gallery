@@ -1,4 +1,4 @@
-export type ArtCategory = 'oil' | 'watercolor' | 'mixed';
+export type ArtCategory = 'oil' | 'watercolor' | 'acrylic' | 'mixed';
 
 export interface ArtworkView {
   src: string;

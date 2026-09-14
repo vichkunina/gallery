@@ -120,6 +120,14 @@ export function Lightbox() {
             </span>
           )}
         </span>
+        <a
+          className="lightbox__download"
+          href={currentView.src}
+          download
+          aria-label={`Скачать фото «${getArtworkDisplayName(selected)}»`}
+        >
+          Скачать фото ↓
+        </a>
         <button ref={closeRef} type="button" className="lightbox__close" onClick={close}>
           Закрыть ✕
         </button>

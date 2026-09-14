@@ -38,6 +38,23 @@
   letter-spacing: 0.04em;
 }
 
+.lightbox__download {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.lightbox__download:hover {
+  color: #fff;
+}
+
 .lightbox__close {
   flex-shrink: 0;
   font-size: 0.62rem;
@@ -101,8 +118,9 @@
   object-fit: contain;
   object-position: center;
   -webkit-user-drag: none;
-  user-select: none;
-  pointer-events: none;
+  user-select: auto;
+  -webkit-touch-callout: default;
+  pointer-events: auto;
 }
 
 .lightbox__filmstrip {

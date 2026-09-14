@@ -1,5 +1,4 @@
 import type { Artwork } from '../types';
-import { SITE_URL } from '../config/seo';
 import { mediaThumbUrl } from '../config/media';
 import {
   getArtworkDisplayName,
@@ -26,6 +25,6 @@ export function getArtworkSeoDescription(art: Artwork): string {
 export function getArtworkSeoImage(art: Artwork, viewIndex = 0): string {
   const views = getArtworkViews(art);
   const src = mediaThumbUrl(views[viewIndex]?.src ?? art.img);
-  if (src.startsWith('http://') || src.startsWith('https://')) return src;
-  return `${SITE_URL}${src.startsWith('/') ? src : `/${src}`}`;
+  const imagePath = src.match(/(?:^|\/)(images\/[^?#]+)/)?.[1];
+  return imagePath ? `https://storage.yandexcloud.net/galleryvic/${imagePath}` : src;
 }

@@ -117,7 +117,7 @@ function buildWorkSharePage(art, catalog, viewIndex = 0, spaAssets = { script: '
   const sharePath = buildWorkSharePath(art.id, viewIndex, multiView);
   const shareUrl = `${SITE_URL}${sharePath}`;
   const imagePath = art.viewImages?.[viewIndex] ?? art.imagePath;
-  const imageUrl = absUrl(thumbPath(imagePath));
+  const imageUrl = `https://storage.yandexcloud.net/galleryvic/${thumbPath(imagePath)}`;
   const assetTags = [
     spaAssets.css ? `    <link rel="stylesheet" href="${spaAssets.css}">` : '',
     spaAssets.script ? `    <script type="module" src="${spaAssets.script}"></script>` : '',
@@ -142,6 +142,7 @@ function buildWorkSharePage(art, catalog, viewIndex = 0, spaAssets = { script: '
     <meta property="og:locale" content="ru_RU" />
     <meta property="og:image" content="${imageUrl}" />
     <meta property="og:image:secure_url" content="${imageUrl}" />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:alt" content="${escapeXml(`${name} — картина, Дарья Вичкунина`)}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${escapeXml(title)}" />
@@ -154,7 +155,14 @@ function buildWorkSharePage(art, catalog, viewIndex = 0, spaAssets = { script: '
 ${assetTags}
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <article style="max-width: 60rem; margin: 2rem auto; padding: 1rem;">
+        <h1>${escapeXml(name)}</h1>
+        <p>${escapeXml(description)}</p>
+        <img src="${imageUrl}" alt="${escapeXml(`${name} — картина, Дарья Вичкунина`)}" style="display: block; max-width: 100%; max-height: 70vh; width: auto; height: auto;" />
+        <p><a href="${SITE_URL}/">Галерея Дарьи Вичкуниной</a></p>
+      </article>
+    </div>
   </body>
 </html>
 `;

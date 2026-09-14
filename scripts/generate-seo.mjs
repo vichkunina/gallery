@@ -68,8 +68,8 @@ function getWorkDescription(art) {
   return seo.getArtworkSeoDescription(art);
 }
 
-function buildWorkSharePath(workId, viewIndex = 0, multiView = false) {
-  if (multiView || viewIndex > 0) return `/work/${workId}/${viewIndex + 1}/`;
+function buildWorkSharePath(workId, viewIndex = 0, _multiView = false) {
+  if (viewIndex > 0) return `/work/${workId}/${viewIndex + 1}/`;
   return `/work/${workId}/`;
 }
 

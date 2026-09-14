@@ -15,6 +15,7 @@ import { getArtworkSaleStatus } from '../../config/artworkSaleStatus';
 import { trackGoal } from '../../utils/analytics';
 import { ArtworkInfo } from '../ArtworkInfo/ArtworkInfo';
 import { LightboxImage } from './LightboxImage';
+import { ArtworkShare } from './ArtworkShare';
 import './Lightbox.css';
 
 export function Lightbox() {
@@ -187,6 +188,7 @@ export function Lightbox() {
           <p className="lightbox__view-label">{currentView.label}</p>
         )}
         <ArtworkInfo art={selected} variant="lightbox" description />
+        <ArtworkShare key={selected.id} workId={selected.id} title={getArtworkDisplayName(selected)} />
         <p><a href="/order/">Обсудить свою картину →</a></p>
         <div className="lightbox__aside-action">
           {getArtworkSaleStatus(selected.id) === 'for_sale' ? (
@@ -219,6 +221,7 @@ export function Lightbox() {
             <p className="lightbox__view-label">{currentView.label}</p>
           )}
           <ArtworkInfo art={selected} variant="lightbox" description />
+          <ArtworkShare key={selected.id} workId={selected.id} title={getArtworkDisplayName(selected)} />
         </div>
         {getArtworkSaleStatus(selected.id) === 'for_sale' ? (
           <a href={artworkPurchaseUrl(selected)} target="_blank" rel="noopener noreferrer" className="lightbox__buy" onClick={handleBuyClick}>

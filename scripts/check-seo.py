@@ -40,11 +40,11 @@ for url in urls:
     assert doc.json,path
 home=page('/')
 assert len([x for x in home.links if re.match(r'/work/\d+',x)])>=44
-assert '/work/48/1/' in home.links and home.links.index('/work/48/1/')<home.links.index('/work/49/1/')
+assert '/work/48/' in home.links and home.links.index('/work/48/')<home.links.index('/work/49/')
 assert not any('pinterest' in x.lower() for x in home.links)
 assert 'Привет' in read('/') and 'data-prerender' in read('/')
-for path in ['/work/48/','/work/48/2/','/work/48/3/']:
-    assert page(path).canonical=='https://vichkunina.art/work/48/1/'
+for path in ['/work/48/','/work/48/1/','/work/48/2/','/work/48/3/']:
+    assert page(path).canonical=='https://vichkunina.art/work/48/'
 assert "You're my angel" in page('/work/45/1/').meta['description']
 star=page('/work/24/');assert 'Не продаётся' in star.meta['description']; assert '000' not in star.meta['description']
 assert 'Продано' in page('/work/49/1/').meta['description']

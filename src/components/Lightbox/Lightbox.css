@@ -457,3 +457,7 @@
     align-self: flex-start;
   }
 }
+
+.lightbox__share { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.75rem; font-size: 0.75rem; }
+.lightbox__share button { min-height: 44px; color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+.lightbox__share input { width: 100%; min-height: 44px; padding: 0.5rem; color: #fff; background: #222; border: 1px solid #777; }

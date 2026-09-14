@@ -92,8 +92,8 @@ export function parseWorkViewFromLocation(
   return Number.isFinite(view) && view > 0 ? view - 1 : 0;
 }
 
-export function buildWorkSharePath(workId: number, viewIndex = 0, multiView = false): string {
-  if (multiView || viewIndex > 0) {
+export function buildWorkSharePath(workId: number, viewIndex = 0, _multiView = false): string {
+  if (viewIndex > 0) {
     return `/work/${workId}/${viewIndex + 1}/`;
   }
   return `/work/${workId}/`;

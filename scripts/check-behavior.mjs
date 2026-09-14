@@ -9,6 +9,9 @@ try {
   const { mediaImageVariants, mediaImageSrcSet } = await server.ssrLoadModule('/src/config/media.ts');
   const { parseWorkFromPathname, buildWorkSharePath } = await server.ssrLoadModule('/src/utils/galleryUrl.ts');
   const { filterArtworks } = await server.ssrLoadModule('/src/utils/galleryFilters.ts');
+  assert.equal(buildWorkSharePath(48, 0, true), '/work/48/');
+  assert.equal(buildWorkSharePath(48, 1, true), '/work/48/2/');
+  assert.deepEqual(parseWorkFromPathname('/work/48/1/'), {workId:48,viewIndex:0});
   const byId = (id) => artworks.find((art) => art.id === id);
   assert.equal(getArtworkPriceLabel(24), null);
   assert.equal(getArtworkPriceLabel(49), null);
@@ -22,7 +25,7 @@ try {
   const draft = new URL(artworkPurchaseUrl(byId(48)));
   assert.equal(draft.hostname, 't.me'); assert.equal(draft.pathname, '/vichkunina');
   assert.match(draft.searchParams.get('text'), /Киллиан Мерфи №2/);
-  assert.match(draft.searchParams.get('text'), /https:\/\/vichkunina.art\/work\/48\/1\//);
+  assert.match(draft.searchParams.get('text'), /https:\/\/vichkunina.art\/work\/48\//);
   for (const art of artworks) {
     const variants = mediaImageVariants(art.img);
     assert.equal(variants.length, 3, art.img);

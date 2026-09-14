@@ -1,5 +1,6 @@
 import type { Artwork } from '../types';
 import { SITE_URL } from '../config/seo';
+import { mediaThumbUrl } from '../config/media';
 import {
   getArtworkDisplayName,
   getArtworkMetaLine,
@@ -24,7 +25,7 @@ export function getArtworkSeoDescription(art: Artwork): string {
 
 export function getArtworkSeoImage(art: Artwork, viewIndex = 0): string {
   const views = getArtworkViews(art);
-  const src = views[viewIndex]?.src ?? art.img;
+  const src = mediaThumbUrl(views[viewIndex]?.src ?? art.img);
   if (src.startsWith('http://') || src.startsWith('https://')) return src;
   return `${SITE_URL}${src.startsWith('/') ? src : `/${src}`}`;
 }
